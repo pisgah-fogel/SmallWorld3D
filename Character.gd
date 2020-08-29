@@ -2,7 +2,7 @@ extends KinematicBody
 
 export var speed = 200
 export var gravity = 600
-var velocity = Vector3(0, 0, 0)
+var velocity = Vector2(0, 0)
 
 onready var mMesh = $Trex
 onready var mAnimationPlayer = $Trex/AnimationPlayer
@@ -49,12 +49,22 @@ func _on_Timer_timeout():
 		State.ACTION:
 			pass
 
+func _unhandled_key_input(event):
+	match mState:
+		State.MOVE:
+			if event.is_action_pressed("ui_action"):
+				start_action()
+			else:
+				event_move(event)
+		State.ACTION:
+			pass
+
 ################## ACTION STATE ####################
 
 func start_action():
 	mAnimationPlayer.play("DownTrack")
 	mState = State.ACTION
-	velocity = Vector3(0, 0, 0)
+	velocity = Vector2(0, 0)
 	mCollisionShape.disabled =false
 	self.move_and_slide(Vector3.ZERO) # Update physic collisions
 
@@ -63,45 +73,47 @@ func end_action():
 	mCollisionShape.disabled = true
 
 ################## MOVE STATE ####################
+var right_strength = 0.0
+var left_strength = 0.0
+var up_strength = 0.0
+var down_strength = 0.0
+var userControl = Vector2.ZERO
+func event_move(event):
+	if event.is_action_pressed("ui_right"):
+		right_strength = event.get_action_strength("ui_right")
+	elif event.is_action_released("ui_right"):
+		right_strength = 0.0
+	
+	if event.is_action_pressed("ui_left"):
+		left_strength = event.get_action_strength("ui_left")
+	elif event.is_action_released("ui_left"):
+		left_strength = 0.0
+	
+	if event.is_action_pressed("ui_down"):
+		down_strength = event.get_action_strength("ui_down")
+	elif event.is_action_released("ui_down"):
+		down_strength = 0.0
+	
+	if event.is_action_pressed("ui_up"):
+		up_strength = event.get_action_strength("ui_up")
+	elif event.is_action_released("ui_up"):
+		up_strength = 0.0
+	userControl.x = right_strength - left_strength
+	userControl.y = down_strength - up_strength
 
 func state_move(delta):
-	var moving = false
+	velocity = velocity.linear_interpolate(userControl.normalized() * speed * delta, 0.2)
+	self.move_and_slide(Vector3(velocity.x, -gravity, velocity.y))
+	teleport_if_falls()
 	
-	if Input.is_action_pressed("ui_right"):
-		velocity.x = lerp(velocity.x, speed, 0.1)
-		moving = true
-	elif Input.is_action_pressed("ui_left"):
-		velocity.x = lerp(velocity.x, -speed, 0.1)
-		moving = true
+	if velocity.length() < 1:
+		mAnimationPlayer.play("IdleTrack")
 	else:
-		velocity.x = lerp(velocity.x, 0, 0.1)
-		
-	if Input.is_action_pressed("ui_up"):
-		moving = true
-		velocity.z = lerp(velocity.z, -speed, 0.1)
-	elif Input.is_action_pressed("ui_down"):
-		moving = true
-		velocity.z = lerp(velocity.z, speed, 0.1)
-	else:
-		velocity.z = lerp(velocity.z, 0, 0.1)
-	
-	var vel = Vector2(velocity.x, velocity.z)
-	if not moving:
-		if Input.is_action_pressed("ui_action"):
-			start_action()
-			return
-		else:
-			mAnimationPlayer.play("IdleTrack")
-	else:
-		var target_angle = atan2(velocity.x, velocity.z)
+		var target_angle = atan2(velocity.x, velocity.y)
 		var buff = mMesh.get_rotation()
 		buff.y = lerp_angle(buff.y, target_angle, 0.1)
 		mMesh.set_rotation(buff)
 		mAnimationPlayer.play("WalkTrack")
-	
-	velocity.y = -gravity # TODO: integrate
-	self.move_and_slide(velocity*delta)
-	teleport_if_falls()
 
 ##################### SAVING RESOURCES ########################
 
