@@ -58,6 +58,15 @@ ui_action={
  ]
 }
 
+[layer_names]
+
+3d_physics/layer_1="World"
+3d_physics/layer_2="Player"
+3d_physics/layer_3="PlayerHurtBox"
+3d_physics/layer_4="EnemyHurtBox"
+3d_physics/layer_5="ItemsCollect"
+3d_physics/layer_6="FishFood"
+
 [rendering]
 
 environment/default_environment="res://default_env.tres"
