@@ -228,6 +228,7 @@ shape = SubResource( 12 )
 script = ExtResource( 12 )
 
 [node name="Control" type="Control" parent="Dialogs"]
+visible = false
 margin_right = 40.0
 margin_bottom = 40.0
 __meta__ = {
@@ -249,6 +250,36 @@ custom_colors/default_color = Color( 0, 0, 0, 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
+
+[node name="Inventory" type="CanvasLayer" parent="."]
+
+[node name="Control" type="Control" parent="Inventory"]
+margin_right = 40.0
+margin_bottom = 40.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Background" type="TileMap" parent="Inventory/Control"]
+format = 1
+
+[node name="Items" type="TileMap" parent="Inventory/Control"]
+format = 1
+
+[node name="DraggedItem" type="Sprite" parent="Inventory/Control"]
+
+[node name="MoneyLabel" type="Label" parent="Inventory/Control"]
+margin_left = 654.064
+margin_top = 268.761
+margin_right = 750.064
+margin_bottom = 302.761
+custom_fonts/font = ExtResource( 11 )
+text = "$$$$$$"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="MoneyLogo" type="Sprite" parent="Inventory/Control"]
 [connection signal="timeout" from="Character/Timer" to="Character" method="_on_Timer_timeout"]
 [connection signal="body_entered" from="StaticChest/Area" to="StaticChest" method="_on_Area_body_entered"]
 
