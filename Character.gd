@@ -6,6 +6,8 @@ var velocity = Vector3(0, 0, 0)
 
 onready var mMesh = $Trex
 onready var mAnimationPlayer = $Trex/AnimationPlayer
+onready var mCollisionShape = $Trex/KinematicBody/CollisionShape
+onready var mTimer = $Timer
 
 enum State {MOVE, ACTION}
 var mState = State.MOVE
@@ -21,12 +23,39 @@ func _physics_process(delta):
 		State.ACTION:
 			pass # Wait for animation to finish
 
+func _process(delta):
+	match mState:
+		State.MOVE:
+			pass
+		State.ACTION:
+			pass
+
 func _end_animation(anim_name):
 	match mState:
 		State.MOVE:
 			pass
 		State.ACTION:
-			mState = State.MOVE
+			end_action()
+
+func _on_Timer_timeout():
+	match mState:
+		State.MOVE:
+			pass
+		State.ACTION:
+			pass
+
+################## ACTION STATE ####################
+
+func start_action():
+	mAnimationPlayer.play("DownTrack")
+	mState = State.ACTION
+	velocity = Vector3(0, 0, 0)
+	mCollisionShape.disabled =false
+	self.move_and_slide(Vector3.ZERO) # Update physic collisions
+
+func end_action():
+	mState = State.MOVE
+	mCollisionShape.disabled = true
 
 ################## MOVE STATE ####################
 
@@ -54,9 +83,7 @@ func state_move(delta):
 	var vel = Vector2(velocity.x, velocity.z)
 	if not moving:
 		if Input.is_action_pressed("ui_action"):
-			mAnimationPlayer.play("DownTrack")
-			mState = State.ACTION
-			velocity = Vector3(0, 0, 0)
+			start_action()
 			return
 		else:
 			mAnimationPlayer.play("IdleTrack")
@@ -70,7 +97,7 @@ func state_move(delta):
 	velocity.y = -gravity # TODO: integrate
 	self.move_and_slide(velocity*delta)
 
-# Utils
+#####################  Utils ############################
 
 func lerp_angle(from, to, weight):
     return from + short_angle_dist(from, to) * weight
