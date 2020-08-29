@@ -12,6 +12,11 @@ onready var mTimer = $Timer
 enum State {MOVE, ACTION}
 var mState = State.MOVE
 
+var objectList = []
+class Wallet:
+	var money:int = 0
+var mWallet = Wallet.new()
+
 func _ready():
 	mAnimationPlayer.connect("animation_finished", self, "_end_animation")
 	mAnimationPlayer.playback_speed = 2 
@@ -96,6 +101,18 @@ func state_move(delta):
 	
 	velocity.y = -gravity # TODO: integrate
 	self.move_and_slide(velocity*delta)
+
+##################### SAVING RESOURCES ########################
+
+func save(save_game: Resource):
+	save_game.data["character_transform"] = self.global_transform
+	save_game.data["character_objects"] = objectList
+	save_game.data["character_money"] = mWallet.money
+
+func load(save_game: Resource):
+	self.global_transform = save_game.data["character_transform"]
+	objectList = save_game.data["character_objects"]
+	mWallet.money = save_game.data["character_money"]
 
 #####################  Utils ############################
 

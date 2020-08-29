@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=2]
+[gd_scene load_steps=17 format=2]
 
 [ext_resource path="res://gfx/Dirt.glb" type="PackedScene" id=1]
 [ext_resource path="res://gfx/Trex.glb" type="PackedScene" id=2]
@@ -7,6 +7,8 @@
 [ext_resource path="res://gfx/Cliff.glb" type="PackedScene" id=5]
 [ext_resource path="res://gfx/Chest.glb" type="PackedScene" id=6]
 [ext_resource path="res://StaticChest.gd" type="Script" id=7]
+[ext_resource path="res://save/GameSaver.tscn" type="PackedScene" id=8]
+[ext_resource path="res://TestScene.gd" type="Script" id=9]
 
 [sub_resource type="BoxShape" id=1]
 extents = Vector3( 11.9077, 1, 14.7146 )
@@ -30,6 +32,9 @@ extents = Vector3( 0.285427, 0.334346, 0.523848 )
 extents = Vector3( 0.264449, 0.230816, 0.460025 )
 
 [node name="TestScene" type="Spatial"]
+script = ExtResource( 9 )
+
+[node name="GameSaver" parent="." instance=ExtResource( 8 )]
 
 [node name="InterpolatedCamera" type="InterpolatedCamera" parent="."]
 transform = Transform( 1, 0, 0, 0, 0.976635, 0.214906, 0, -0.214906, 0.976635, 1.36024, 4.27465, 13.7618 )
@@ -51,7 +56,9 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -12.7533, -1.33088, 1.42048 )
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.677635 )
 shape = SubResource( 1 )
 
-[node name="Character" type="KinematicBody" parent="."]
+[node name="Character" type="KinematicBody" parent="." groups=[
+"save",
+]]
 collision_layer = 2
 script = ExtResource( 3 )
 
