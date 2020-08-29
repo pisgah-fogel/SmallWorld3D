@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=2]
+[gd_scene load_steps=22 format=2]
 
 [ext_resource path="res://gfx/Dirt.glb" type="PackedScene" id=1]
 [ext_resource path="res://gfx/Trex.glb" type="PackedScene" id=2]
@@ -10,20 +10,20 @@
 [ext_resource path="res://save/GameSaver.tscn" type="PackedScene" id=8]
 [ext_resource path="res://TestScene.gd" type="Script" id=9]
 
-[sub_resource type="BoxShape" id=1]
-extents = Vector3( 11.9077, 1, 14.7146 )
-
 [sub_resource type="BoxShape" id=6]
 extents = Vector3( 0.460814, 0.497213, 0.542647 )
 
 [sub_resource type="BoxShape" id=2]
 extents = Vector3( 1, 0.892338, 1 )
 
+[sub_resource type="BoxShape" id=1]
+extents = Vector3( 14.4507, 1, 15.667 )
+
 [sub_resource type="BoxShape" id=3]
 extents = Vector3( 0.637293, 1, 0.715345 )
 
 [sub_resource type="BoxShape" id=4]
-extents = Vector3( 6.21725, 4.77839, 3.95122 )
+extents = Vector3( 7.41119, 4.77839, 3.95122 )
 
 [sub_resource type="BoxShape" id=5]
 extents = Vector3( 0.285427, 0.334346, 0.523848 )
@@ -76,19 +76,31 @@ void fragment() {
 [sub_resource type="ShaderMaterial" id=10]
 shader = SubResource( 9 )
 shader_param/out_color = Color( 0, 0.2, 1, 1 )
-shader_param/amount = 0.8
-shader_param/beer_factor = 0.2
+shader_param/amount = 0.2
+shader_param/beer_factor = 1.073
 
 [sub_resource type="PlaneMesh" id=8]
 material = SubResource( 10 )
-size = Vector2( 50, 50 )
-subdivide_width = 25
-subdivide_depth = 25
+size = Vector2( 5, 20 )
+subdivide_width = 3
+subdivide_depth = 3
+
+[sub_resource type="BoxShape" id=11]
+extents = Vector3( 2.12465, 5.58921, 9.72563 )
+
+[sub_resource type="BoxShape" id=12]
+extents = Vector3( 1.0946, 16.7698, 25.3513 )
 
 [node name="TestScene" type="Spatial"]
 script = ExtResource( 9 )
 
 [node name="GameSaver" parent="." instance=ExtResource( 8 )]
+
+[node name="OmniLight" type="OmniLight" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -4.87394, 3.63377, 0 )
+light_color = Color( 0.862745, 0.662745, 0.376471, 1 )
+shadow_enabled = true
+omni_range = 50.0
 
 [node name="InterpolatedCamera" type="InterpolatedCamera" parent="."]
 transform = Transform( 1, 0, 0, 0, 0.976635, 0.214906, 0, -0.214906, 0.976635, 1.36024, 4.27465, 13.7618 )
@@ -99,16 +111,6 @@ far = 70.0
 target = NodePath("../Character/CameraTarget")
 speed = 2.5
 enabled = true
-
-[node name="FloorDirt" type="StaticBody" parent="."]
-collision_mask = 0
-
-[node name="Dirt" parent="FloorDirt" instance=ExtResource( 1 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -12.7533, -1.33088, 1.42048 )
-
-[node name="CollisionShape" type="CollisionShape" parent="FloorDirt"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.677635 )
-shape = SubResource( 1 )
 
 [node name="Character" type="KinematicBody" parent="." groups=[
 "save",
@@ -138,11 +140,15 @@ shape = SubResource( 2 )
 
 [node name="Timer" type="Timer" parent="Character"]
 
-[node name="OmniLight" type="OmniLight" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -4.87394, 3.63377, 0 )
-light_color = Color( 0.862745, 0.662745, 0.376471, 1 )
-shadow_enabled = true
-omni_range = 50.0
+[node name="FloorDirt" type="StaticBody" parent="."]
+collision_mask = 0
+
+[node name="Dirt" parent="FloorDirt" instance=ExtResource( 1 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -12.7533, -1.33088, 1.42048 )
+
+[node name="CollisionShape" type="CollisionShape" parent="FloorDirt"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1.70708, 0, -0.677635 )
+shape = SubResource( 1 )
 
 [node name="StaticTree" type="StaticBody" parent="."]
 collision_mask = 0
@@ -159,7 +165,7 @@ transform = Transform( 1.97111, 0, 0, 0, 1, 0, 0, 0, 2.69906, -1.08803, 0, 25.65
 collision_mask = 0
 
 [node name="CollisionShape" type="CollisionShape" parent="StaticCliff"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 2.03526, 3.78093, -17.8208 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1.83137, 3.78093, -17.8208 )
 shape = SubResource( 4 )
 
 [node name="Cliff" parent="StaticCliff" instance=ExtResource( 5 )]
@@ -185,10 +191,35 @@ collision_mask = 2147483648
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 3.24634, 1.3237, -0.37635 )
 shape = SubResource( 7 )
 
-[node name="MeshInstance" type="MeshInstance" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.249861, -0.151991, 0 )
+[node name="StaticSea" type="StaticBody" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -2.53338, 0, 0 )
+
+[node name="Sea" type="MeshInstance" parent="StaticSea"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 20.8515, -0.151991, -3.39523 )
 mesh = SubResource( 8 )
 material/0 = null
+
+[node name="CollisionShape" type="CollisionShape" parent="StaticSea"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 20.7661, 3.57615, -3.52005 )
+shape = SubResource( 11 )
+
+[node name="StaticInvisibleWall" type="StaticBody" parent="."]
+
+[node name="CollisionShape" type="CollisionShape" parent="StaticInvisibleWall"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -13.0271, 1.25932, -9.01823 )
+shape = SubResource( 12 )
+
+[node name="StaticInvisibleWall2" type="StaticBody" parent="."]
+
+[node name="CollisionShape" type="CollisionShape" parent="StaticInvisibleWall2"]
+transform = Transform( -0.0181331, 0, 0.999836, 0, 1, 0, -0.999836, 0, -0.0181331, -0.0428877, 1.25932, 12.6876 )
+shape = SubResource( 12 )
+
+[node name="StaticInvisibleWall3" type="StaticBody" parent="."]
+
+[node name="CollisionShape" type="CollisionShape" parent="StaticInvisibleWall3"]
+transform = Transform( -0.743915, 0, 0.668274, 0, 1, 0, -0.668274, 0, -0.743915, 20.3444, 1.25932, 2.2021 )
+shape = SubResource( 12 )
 [connection signal="timeout" from="Character/Timer" to="Character" method="_on_Timer_timeout"]
 [connection signal="body_entered" from="StaticChest/Area" to="StaticChest" method="_on_Area_body_entered"]
 

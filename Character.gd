@@ -101,6 +101,7 @@ func state_move(delta):
 	
 	velocity.y = -gravity # TODO: integrate
 	self.move_and_slide(velocity*delta)
+	teleport_if_falls()
 
 ##################### SAVING RESOURCES ########################
 
@@ -113,8 +114,14 @@ func load(save_game: Resource):
 	self.global_transform = save_game.data["character_transform"]
 	objectList = save_game.data["character_objects"]
 	mWallet.money = save_game.data["character_money"]
+	
+	teleport_if_falls()
 
 #####################  Utils ############################
+
+func teleport_if_falls():
+	if self.translation.y < -10:
+		self.translation = Vector3(0, 20, 0)
 
 func lerp_angle(from, to, weight):
     return from + short_angle_dist(from, to) * weight
