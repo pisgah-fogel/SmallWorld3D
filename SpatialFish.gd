@@ -1,11 +1,13 @@
 extends Spatial
 
 enum State {
+	ENTER,
 	WANDER
 }
 
-var mState = State.WANDER
+var mState = State.ENTER
 
+export(int) var spawnDepth = -2
 export(int) var mDepth = 0
 
 export(int) var default_speed = 50
@@ -26,7 +28,7 @@ func random_vec_in_zone():
 
 func _ready():
 	self.rotation.y = randf()*2*3.14
-	start_wander()
+	start_enter()
 
 func _process(delta):
 	if delta > 1:
@@ -34,6 +36,8 @@ func _process(delta):
 	match mState:
 		State.WANDER:
 			state_wander(delta)
+		State.ENTER:
+			state_enter(delta)
 
 func _unhandled_key_input(event):
 	match mState:
@@ -46,7 +50,21 @@ func _on_FishView_body_entered(body):
 
 func _on_PredatorView_body_entered(body):
 	print("Body entered predatorView")
-	
+
+#######################  ENTER   ##########################
+
+func start_enter():
+	mState = State.ENTER
+	mAnimationPlayer.get_animation("Static").loop = true
+	mAnimationPlayer.play("Static")
+	translation.y = spawnDepth
+
+func state_enter(delta):
+	if translation.y < mDepth:
+		translation.y += delta*speed*0.2
+	else:
+		start_wander()
+
 #######################   WANDERING   ###############################
 
 func start_wander():
