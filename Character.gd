@@ -2,6 +2,7 @@ extends KinematicBody
 
 export var speed = 200
 export var gravity = 600
+export var max_inventory = 5*2
 var velocity = Vector2(0, 0)
 
 onready var mMesh = $Trex
@@ -9,7 +10,7 @@ onready var mAnimationPlayer = $Trex/AnimationPlayer
 onready var mCollisionShape = $Trex/KinematicBody/CollisionShape
 onready var mTimer = $Timer
 
-enum State {MOVE, ACTION}
+enum State {MOVE, ACTION, INVENTORY}
 var mState = State.MOVE
 
 var objectList = []
@@ -55,10 +56,99 @@ func _unhandled_key_input(event):
 		State.MOVE:
 			if event.is_action_pressed("ui_action"):
 				start_action()
+			elif event.is_action_pressed("ui_inventory"):
+				start_inventory()
+			elif event.is_action_pressed("ui_cheat"):
+				mWallet.money += 10
+				if haveSpareSpace():
+					var Item = load('res://Item.gd')
+					var object = Item.new()
+					#object.id = Item._id.ID_GRASS
+					object.id = randi()%5
+					object.name = Item._name[object.id]
+					object.data["quality"] = randi()%3;
+					addObjectToInventory(object)
+					print("User cheated")
 			else:
 				event_move(event)
 		State.ACTION:
 			pass
+		State.INVENTORY:
+			if event.is_action_pressed("ui_cancel") or event.is_action_pressed("ui_inventory"):
+				end_inventory()
+
+################## INVENTORY STATE ####################
+const Inventory = preload("res://Inventory.tscn")
+var inventoryInstance = null
+func start_inventory():
+	# TODO: play inventory animation
+	mState = State.INVENTORY
+	velocity = Vector2(0, 0)
+	right_strength = 0.0
+	left_strength = 0.0
+	up_strength = 0.0
+	down_strength = 0.0
+	userControl = Vector2.ZERO
+	openInventory(null)
+
+func openInventory(chest):
+	# Open inventory
+	# TODO: play IDLE animation and loop
+	clear_null_inventory()
+	inventoryInstance = Inventory.instance()
+	if inventoryInstance.has_method("setUserWallet"):
+		inventoryInstance.setUserWallet(mWallet)
+	if chest and chest.has_method("setUserWallet"):
+		chest.setUserWallet(mWallet)
+	inventoryInstance.setInventoryList(objectList)
+	inventoryInstance.setChest(chest)
+	add_child(inventoryInstance)
+
+func end_inventory():
+	mState = State.MOVE
+	Input.set_mouse_mode(Input.MOUSE_MODE_HIDDEN)
+	if inventoryInstance != null:
+		if inventoryInstance.mChest != null:
+			inventoryInstance.mChest.closeChest()
+		inventoryInstance.queue_free()
+
+func _on_chestOpenned(chest):
+	mState = State.INVENTORY
+	velocity = Vector2(0, 0)
+	right_strength = 0.0
+	left_strength = 0.0
+	up_strength = 0.0
+	down_strength = 0.0
+	userControl = Vector2.ZERO
+	openInventory(chest)
+
+func clear_null_inventory():
+	while objectList.size() > 0 and objectList[objectList.size()-1] == null:
+		objectList.pop_back()
+
+func receiveObject(object, giver):
+	print("Player received ", object.name)
+	if haveSpareSpace():
+		giver.canRemoveObject(object)
+		addObjectToInventory(object)
+	else:
+		# TODO handle inventory full
+		giver.canRemoveObject(object)
+		print("Inventory is full")
+
+func haveSpareSpace():
+	var count = 0
+	for item in objectList:
+		if item == null:
+			count += 1
+	return objectList.size()-count < max_inventory
+
+func addObjectToInventory(object):
+	for i in range(objectList.size()):
+		if objectList[i] == null:
+			objectList[i] = object
+			return
+	objectList.append(object)
 
 ################## ACTION STATE ####################
 
@@ -66,6 +156,11 @@ func start_action():
 	mAnimationPlayer.play("DownTrack")
 	mState = State.ACTION
 	velocity = Vector2(0, 0)
+	right_strength = 0.0
+	left_strength = 0.0
+	up_strength = 0.0
+	down_strength = 0.0
+	userControl = Vector2.ZERO
 	mCollisionShape.disabled =false
 	self.move_and_slide(Vector3.ZERO) # Update physic collisions
 

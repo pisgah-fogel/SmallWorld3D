@@ -8,18 +8,16 @@ onready var mControl = $Control
 
 export(int) var num_column = 5
 export(int) var num_row = 2
-export var tileStart = Vector2(0, 0)
+export var tileStart = Vector2(2, 4)
 export(int) var chest_tile = 1
 export(int) var shop_tile = 2
 export(int) var bin_tile = 3
 
 
 
-var hand_open = load("res://gfx_src/hand_open.png")
-var hand_close = load("res://gfx_src/hand_close.png")
+var hand_open = load("res://gfx/hand_open.png")
+var hand_close = load("res://gfx/hand_close.png")
 export(Vector2) var hand_offset =  Vector2(50, 40)
-
-signal newInventorySelection(item)
 
 var mChest = null setget setChest
 func setChest(newchest):
@@ -30,9 +28,8 @@ func setChest(newchest):
 var mUserWallet = null setget setUserWallet
 func setUserWallet(wallet):
 	mUserWallet = wallet
-	if mMoneyLabel != null:
-		mMoneyLabel.text = str(wallet.money)
-	mMoneyLabel.text = str(mUserWallet.money)
+	if mMoneyLabel != null and mUserWallet != null:
+		mMoneyLabel.text = str(mUserWallet.money)
 
 var mObjects = [] setget setInventoryList # Contains all the objects from the user
 func setInventoryList(list):
@@ -70,7 +67,7 @@ func create_chest_background():
 func update_drafting_sprite(i:int, object):
 	if i < object.mObjects.size() and i >= 0:
 		if object.mObjects[i] != null:
-			mDraggedItem.position = mControl.get_local_mouse_position() - Vector2(600, 500)
+			mDraggedItem.position = mControl.get_local_mouse_position()
 			mDraggedItem.visible = true
 			mDraggedItem.index = object.mObjects[i].id
 		else:
@@ -80,11 +77,9 @@ func reset_drafting_sprite():
 	mDraggedItem.index = 0
 	mDraggedItem.visible = false
 
-#emit_signal("newInventorySelection", mObjects[i])
-
 func update_mItems():
 	var count = 0
-	if not mObjects:
+	if not mObjects or mItems == null:
 		return
 	for item in mObjects:
 		var sprite_id = -1
@@ -143,7 +138,7 @@ var draggingObj = null
 func follow_mouse(event):
 	if dragging and draggingObj != null:
 		mDraggedItem.visible = true
-		mDraggedItem.position = event.position - Vector2(600, 500)
+		mDraggedItem.position = event.position
 
 ###################################### START DRAG #########################################
 var originalPos = 0
@@ -184,14 +179,14 @@ func start_drag_sprite(pos):
 		originChest = false
 		if pos_sel < 0:
 			abord_draft()
-		elif pos_sel < mObjects.size():
+		elif pos_sel < mObjects.size() and mObjects[pos_sel] != null:
 			pickup_in(self, pos_sel)
 	elif mChest != null and is_inside_inventory(ix, iy, mChest): # valid coordinates ?
-		var pos_sel = (ix-mChest.tileStart.x) + (iy-mChest.tileStart.y-1)*mChest.num_column
+		var pos_sel = (ix-mChest.tileStart.x) + (iy-mChest.tileStart.y)*mChest.num_column
 		originChest = true
 		if pos_sel < 0:
 			abord_draft()
-		elif pos_sel < mChest.mObjects.size():
+		elif pos_sel < mChest.mObjects.size() and mChest.mObjects[pos_sel] != null:
 			pickup_in(mChest, pos_sel)
 	else:
 		abord_draft()
@@ -224,9 +219,10 @@ func drop_in(container, pos_sel_bis):
 		abord_drop()
 	elif pos_sel_bis < container.mObjects.size() and container.mObjects[pos_sel_bis] != null:
 		# Switch Items
-		var buff = container.mObjects[pos_sel_bis]
-		container.setItem(originalPos, buff) # External object: need to call the setter
-		container.setItem(pos_sel_bis, draggingObj)
+		var buff = draggingObj
+		draggingObj = container.mObjects[pos_sel_bis]
+		abord_drop()
+		container.setItem(pos_sel_bis, buff)
 	elif pos_sel_bis < container.mObjects.size() and container.mObjects[pos_sel_bis] == null:
 		# remplace null item with this one
 		container.setItem(pos_sel_bis, draggingObj)
@@ -250,7 +246,7 @@ func end_drag_sprite(pos):
 		var pos_sel_bis = (ix-tileStart.x) + (iy-tileStart.y)*num_column
 		drop_in(self, pos_sel_bis)
 	elif mChest != null and is_inside_inventory(ix, iy, mChest):
-		var pos_sel_bis = (ix-mChest.tileStart.x) + (iy-mChest.tileStart.y-1)*mChest.num_column
+		var pos_sel_bis = (ix-mChest.tileStart.x) + (iy-mChest.tileStart.y)*mChest.num_column
 		drop_in(mChest, pos_sel_bis)
 	else:
 		abord_drop()

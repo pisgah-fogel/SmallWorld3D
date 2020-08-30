@@ -112,7 +112,7 @@ func _size_changed():
 func update_selection():
 	for choice in allChoices:
 		choice.setActive(false)
-	if allChoices.size() > selection:
+	if allChoices.size() > selection and selection >= 0:
 		allChoices[selection].setActive(true)
 
 func _userChoosed(choice):
