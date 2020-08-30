@@ -5,6 +5,12 @@ onready var mAnimationPlayer = $Chest/AnimationPlayer
 enum State {CLOSED, OPEN}
 var mState = State.CLOSED
 
+export var mObjects = []
+export var num_column = 3
+export var num_row = 1
+
+var tileStart = Vector2(2, 1)
+
 func _on_Area_body_entered(body):
 	print("Openning Chest")
 	match mState:
@@ -16,12 +22,6 @@ func _on_Area_body_entered(body):
 			mState = State.CLOSED
 	body.get_parent().get_parent()._on_chestOpenned(self)
 
-export var mObjects = []
-export var num_column = 3
-export var num_row = 1
-
-var tileStart = Vector2(2, 1)
-	
 func closeChest():
 	match mState:
 		State.CLOSED:

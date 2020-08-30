@@ -83,12 +83,7 @@ var inventoryInstance = null
 func start_inventory():
 	# TODO: play inventory animation
 	mState = State.INVENTORY
-	velocity = Vector2(0, 0)
-	right_strength = 0.0
-	left_strength = 0.0
-	up_strength = 0.0
-	down_strength = 0.0
-	userControl = Vector2.ZERO
+	reset_movements_and_picking()
 	openInventory(null)
 
 func openInventory(chest):
@@ -114,12 +109,7 @@ func end_inventory():
 
 func _on_chestOpenned(chest):
 	mState = State.INVENTORY
-	velocity = Vector2(0, 0)
-	right_strength = 0.0
-	left_strength = 0.0
-	up_strength = 0.0
-	down_strength = 0.0
-	userControl = Vector2.ZERO
+	reset_movements_and_picking()
 	openInventory(chest)
 
 func clear_null_inventory():
@@ -155,12 +145,7 @@ func addObjectToInventory(object):
 func start_action():
 	mAnimationPlayer.play("DownTrack")
 	mState = State.ACTION
-	velocity = Vector2(0, 0)
-	right_strength = 0.0
-	left_strength = 0.0
-	up_strength = 0.0
-	down_strength = 0.0
-	userControl = Vector2.ZERO
+	reset_movements_and_picking()
 	mCollisionShape.disabled =false
 	self.move_and_slide(Vector3.ZERO) # Update physic collisions
 
@@ -210,6 +195,15 @@ func state_move(delta):
 		buff.y = lerp_angle(buff.y, target_angle, 0.1)
 		mMesh.set_rotation(buff)
 		mAnimationPlayer.play("WalkTrack")
+
+func reset_movements_and_picking():
+	velocity = Vector2(0, 0)
+	right_strength = 0.0
+	left_strength = 0.0
+	up_strength = 0.0
+	down_strength = 0.0
+	userControl = Vector2.ZERO
+	mCollisionShape.disabled = true
 
 ##################### SAVING RESOURCES ########################
 

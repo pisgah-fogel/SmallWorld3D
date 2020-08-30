@@ -5,6 +5,7 @@ onready var mItems = $Control/Items
 onready var mDraggedItem = $Control/DraggedItem
 onready var mMoneyLabel = $Control/MoneyLabel
 onready var mControl = $Control
+onready var mTotalLabel = $Control/TotalLabel
 
 export(int) var num_column = 5
 export(int) var num_row = 2
@@ -45,6 +46,7 @@ func _ready():
 		mMoneyLabel.text = str(mUserWallet.money)
 	get_tree().get_root().connect("size_changed", self, "_size_changed")
 	reset_drafting_sprite()
+	update_placing()
 
 func _size_changed():
 	update_placing()
@@ -165,7 +167,7 @@ func pickup_in(container, pos_sel):
 	originalPos = pos_sel
 	update_drafting_sprite(pos_sel, container)
 	draggingObj = container.mObjects[pos_sel]
-	container.mObjects[pos_sel] = null
+	container.setItem(pos_sel, null)
 	update_mItems()
 
 func start_drag_sprite(pos):
@@ -190,6 +192,12 @@ func start_drag_sprite(pos):
 			pickup_in(mChest, pos_sel)
 	else:
 		abord_draft()
+	
+	if mChest and mChest.get("isShop"): # update shop
+		if mChest.total == 0:
+			mTotalLabel.text = ""
+		else:
+			mTotalLabel.text = "+ " + str(mChest.total)
 
 ###################################### END DRAG #########################################
 
@@ -253,3 +261,9 @@ func end_drag_sprite(pos):
 	originalPos = 0
 	draggingObj = null
 	update_mItems()
+	
+	if mChest and mChest.get("isShop"): # update shop
+		if mChest.total == 0:
+			mTotalLabel.text = ""
+		else:
+			mTotalLabel.text = "+ " + str(mChest.total)

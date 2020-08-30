@@ -1,4 +1,4 @@
-[gd_scene load_steps=29 format=2]
+[gd_scene load_steps=31 format=2]
 
 [ext_resource path="res://gfx/Dirt.glb" type="PackedScene" id=1]
 [ext_resource path="res://gfx/Trex.glb" type="PackedScene" id=2]
@@ -14,6 +14,7 @@
 [ext_resource path="res://Dialogs.gd" type="Script" id=12]
 [ext_resource path="res://Water.shader" type="Shader" id=13]
 [ext_resource path="res://StaticBin.gd" type="Script" id=14]
+[ext_resource path="res://StaticShop.gd" type="Script" id=15]
 
 [sub_resource type="BoxShape" id=6]
 extents = Vector3( 0.460814, 0.497213, 0.542647 )
@@ -49,10 +50,10 @@ extents = Vector3( 2.12465, 5.58921, 9.72563 )
 extents = Vector3( 1.0946, 16.7698, 25.3513 )
 
 [sub_resource type="BoxShape" id=5]
-extents = Vector3( 0.285427, 0.334346, 0.523848 )
+extents = Vector3( 0.415165, 0.334346, 0.406846 )
 
 [sub_resource type="BoxShape" id=7]
-extents = Vector3( 0.264449, 0.230816, 0.460025 )
+extents = Vector3( 0.264449, 0.230816, 0.316052 )
 
 [sub_resource type="BoxShape" id=13]
 extents = Vector3( 0.450746, 0.594694, 0.525791 )
@@ -61,6 +62,8 @@ extents = Vector3( 0.450746, 0.594694, 0.525791 )
 extents = Vector3( 0.355825, 0.53376, 0.412701 )
 
 [sub_resource type="CapsuleMesh" id=15]
+
+[sub_resource type="CapsuleMesh" id=16]
 
 [node name="TestScene" type="Spatial"]
 script = ExtResource( 9 )
@@ -176,8 +179,10 @@ shape = SubResource( 12 )
 script = ExtResource( 12 )
 
 [node name="Control" type="Control" parent="Dialogs"]
-margin_right = 40.0
-margin_bottom = 40.0
+margin_left = -1.5874
+margin_top = 320.655
+margin_right = 38.4126
+margin_bottom = 360.655
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -201,7 +206,7 @@ __meta__ = {
 [node name="StaticChest" type="StaticBody" parent="." groups=[
 "save",
 ]]
-transform = Transform( 0.0988334, 0, -0.995104, 0, 1, 0, 0.995104, 0, 0.0988334, 6.5272, 0.101134, -7.7271 )
+transform = Transform( 0.0988334, 0, -0.995104, 0, 1, 0, 0.995104, 0, 0.0988334, 6.5272, 0.101134, -10.5905 )
 collision_mask = 0
 script = ExtResource( 7 )
 
@@ -221,6 +226,7 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 3.24634, 1.3237, -0.37635 )
 shape = SubResource( 7 )
 
 [node name="StaticBin" type="StaticBody" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1.6172 )
 collision_mask = 0
 script = ExtResource( 14 )
 
@@ -240,9 +246,33 @@ shape = SubResource( 14 )
 transform = Transform( 0.404135, -0.0181976, -0.00195376, 0.00139799, 0.0800606, -0.456523, 0.0174327, 0.380154, 0.0651294, 0, 1.72775, -5.58771 )
 mesh = SubResource( 15 )
 material/0 = null
+
+[node name="StaticShop" type="StaticBody" parent="."]
+transform = Transform( 0.0988334, 0, -0.995104, 0, 1, 0, 0.995104, 0, 0.0988334, 3.87369, 0.101134, -6.9723 )
+collision_mask = 0
+script = ExtResource( 15 )
+
+[node name="CollisionShape" type="CollisionShape" parent="StaticShop"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0146537, 1.70022, 0.24458 )
+shape = SubResource( 5 )
+
+[node name="Area" type="Area" parent="StaticShop"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -2.88247, 0.446999, 0.589488 )
+collision_layer = 16
+collision_mask = 2147483648
+
+[node name="CollisionShape" type="CollisionShape" parent="StaticShop/Area"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 2.86033, 1.3237, -0.35132 )
+shape = SubResource( 7 )
+
+[node name="MeshInstance" type="MeshInstance" parent="StaticShop"]
+transform = Transform( -4.88762e-08, 0.3, -4.88762e-08, 0, -4.88762e-08, -0.3, -0.3, -4.88762e-08, 7.96294e-15, -0.0236864, 1.63673, 0.238489 )
+mesh = SubResource( 16 )
+material/0 = null
 [connection signal="timeout" from="Character/Timer" to="Character" method="_on_Timer_timeout"]
 [connection signal="body_entered" from="StaticChest/Area" to="StaticChest" method="_on_Area_body_entered"]
 [connection signal="body_entered" from="StaticBin/Area" to="StaticBin" method="_on_Area_body_entered"]
+[connection signal="body_entered" from="StaticShop/Area" to="StaticShop" method="_on_Area_body_entered"]
 
 [editable path="Character/Trex"]
 

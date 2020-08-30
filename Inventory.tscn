@@ -650,7 +650,19 @@ margin_top = 268.761
 margin_right = 750.064
 margin_bottom = 302.761
 custom_fonts/font = ExtResource( 3 )
-text = "$$$$$$"
+text = "$$$"
+align = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="TotalLabel" type="Label" parent="Control"]
+margin_left = 762.186
+margin_top = 255.413
+margin_right = 858.186
+margin_bottom = 289.413
+custom_fonts/font = ExtResource( 3 )
+custom_colors/font_color = Color( 0.992157, 1, 0, 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
