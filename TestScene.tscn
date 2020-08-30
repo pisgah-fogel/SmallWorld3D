@@ -193,10 +193,10 @@ margin_bottom = 40.0
 texture = ExtResource( 10 )
 
 [node name="Text" type="RichTextLabel" parent="Dialogs/Control"]
-margin_left = 49.0
-margin_top = 41.0
-margin_right = 754.0
-margin_bottom = 238.0
+margin_left = 50.7818
+margin_top = 46.3454
+margin_right = 755.782
+margin_bottom = 243.345
 custom_fonts/normal_font = ExtResource( 11 )
 custom_colors/default_color = Color( 0, 0, 0, 1 )
 __meta__ = {
