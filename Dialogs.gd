@@ -8,6 +8,7 @@ var current = null
 var current_index = 0
 
 var allChoices = []
+
 var selection = 0
 
 export(int) var choice_x = 870
@@ -16,7 +17,7 @@ export(int) var choice_h = 110
 
 const Choice = preload("res://Choice.tscn")
 
-var mScriptState: int = 0
+var variables = {}
 var mScript = [
 	{
 		"startup": true,
@@ -25,23 +26,19 @@ var mScript = [
 				"text":"Hello and welcome,\npress 'A' to play with us !"
 			},
 			{
-				"state":0,
 				"text":"Good job !\nBy the way, How are you ?",
 				"question":true,
-				"clearstate": true,
 				"options":[
-					{"text":"Good", "newstate":1},
-					{"text":"Bof...", "newstate":2}
+					{"text":"Good", "set":{"isOk":true}},
+					{"text":"Bof...", "set":{"isOk":false}}
 					]
 			},
 			{
-				"clearstate": true,
-				"state":2,
+				"check":{"isOk":false},
 				"text":"So bad...\nBut don't worry, here you can have fun !"
 			},
 			{
-				"clearstate": true,
-				"state":1,
+				"check":{"isOk":true},
 				"text":"Nice !\nHave fun !"
 			}
 		]
@@ -63,8 +60,6 @@ func update_text():
 	selection = -1
 	if current and is_reading:
 		mText.text = current[current_index]["text"]
-		if "clearstate" in current[current_index]:
-			mScriptState = 0
 		if "options" in current[current_index]:
 			var i = 0
 			for option in current[current_index]["options"]:
@@ -88,9 +83,19 @@ func clear_choices():
 func next_text():
 	clear_choices()
 	if current and is_reading:
-		current_index += 1
-		while current_index < current.size() and ("state" in current[current_index] and  current[current_index]["state"] != mScriptState):
+		# if no check: ok
+		# if check it need to match variables
+		var continue_loop = true
+		while continue_loop:
 			current_index += 1
+			if current_index < current.size() and "check" in current[current_index]:
+				for v in current[current_index]["check"]:
+					if v in variables and variables[v] == current[current_index]["check"][v]:
+						print(v, " match ", variables[v])
+						continue_loop = false
+			else:
+				continue_loop = false
+		
 		if current_index < current.size():
 			update_text()
 		else:
@@ -116,10 +121,9 @@ func update_selection():
 		allChoices[selection].setActive(true)
 
 func _userChoosed(choice):
-	if "newstate" in choice:
-		mScriptState = choice["newstate"]
-	else:
-		mScriptState = 0
+	if "set" in choice:
+		for v in choice["set"]:
+			variables[v] = choice["set"][v]
 
 func _input(event):
 	if not is_reading:
