@@ -19,7 +19,8 @@ var mWallet = Wallet.new()
 
 func _ready():
 	mAnimationPlayer.connect("animation_finished", self, "_end_animation")
-	mAnimationPlayer.playback_speed = 2 
+	mAnimationPlayer.playback_speed = 2
+	Input.set_mouse_mode(Input.MOUSE_MODE_HIDDEN)
 
 func _physics_process(delta):
 	match mState:
