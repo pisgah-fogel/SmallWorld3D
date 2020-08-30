@@ -1,16 +1,10 @@
 extends Spatial
 
 enum State {
-	ENTER,
-	WANDER,
-	CHASING,
-	SCARED,
-	SLEEP,
-	EATING,
-	SHOW
+	WANDER
 }
 
-var mState = State.ENTER
+var mState = State.WANDER
 
 export(int) var mDepth = 0
 
@@ -32,15 +26,37 @@ func random_vec_in_zone():
 
 func _ready():
 	self.rotation.y = randf()*2*3.14
-	destination = random_vec_in_zone()
-	self.look_at(Vector3(destination.x, mDepth, destination.y), Vector3(0, 1, 0))
-	mAnimationPlayer.get_animation("Static").loop = true
-	mAnimationPlayer.play("Static")
+	start_wander()
 
 func _process(delta):
 	if delta > 1:
 		return # Abord if lagging
+	match mState:
+		State.WANDER:
+			state_wander(delta)
 
+func _unhandled_key_input(event):
+	match mState:
+		State.WANDER:
+			event_wander(event)
+
+func _on_FishView_body_entered(body):
+	print("Body entered fishview")
+
+
+func _on_PredatorView_body_entered(body):
+	print("Body entered predatorView")
+	
+#######################   WANDERING   ###############################
+
+func start_wander():
+	mAnimationPlayer.get_animation("Static").loop = true
+	mAnimationPlayer.play("Static")
+	destination = random_vec_in_zone()
+	self.look_at(Vector3(destination.x, mDepth, destination.y), Vector3(0, 1, 0))
+	mState = State.WANDER
+
+func state_wander(delta):
 	if translation.distance_to(Vector3(destination.x, mDepth, destination.y)) <= 0.1:
 		destination = random_vec_in_zone()
 		#self.look_at(Vector3(destination.x, mDepth, destination.y), Vector3(0, 1, 0))
@@ -49,9 +65,8 @@ func _process(delta):
 		self.look_at(Vector3(destination.x, mDepth, destination.y), Vector3(0, 1, 0))
 		translate(Vector3(0, 0, -delta*speed))
 
-func _on_FishView_body_entered(body):
-	print("Body entered fishview")
+func end_wanter():
+	pass
 
-
-func _on_PredatorView_body_entered(body):
-	print("Body entered predatorView")
+func event_wander(event):
+	pass
