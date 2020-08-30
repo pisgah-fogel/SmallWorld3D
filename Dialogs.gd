@@ -23,23 +23,26 @@ var mScript = [
 		"startup": true,
 		"msg": [
 			{
-				"text":"Hello and welcome,\npress 'A' to play with us !"
+				"text":"Developpeur:\nJ'ai un probleme avec mon coffre,"
 			},
 			{
-				"text":"Good job !\nBy the way, How are you ?",
+				"text":"il apparait parfois vide a la premiere ouverture..."
+			},
+			{
+				"text":"Les graphimes vont etre ameliores ne t'inquiete pas",
 				"question":true,
 				"options":[
-					{"text":"Good", "set":{"isOk":true}},
-					{"text":"Bof...", "set":{"isOk":false}}
+					{"text":"Ok", "set":{"isOk":true}},
+					{"text":"Autre...", "set":{"isOk":false}}
 					]
 			},
 			{
-				"check":{"isOk":false},
-				"text":"So bad...\nBut don't worry, here you can have fun !"
+				"check":{"isOk":true},
+				"text":"Amuses toi bien !"
 			},
 			{
-				"check":{"isOk":true},
-				"text":"Nice !\nHave fun !"
+				"check":{"isOk":false},
+				"text":"Peut importe... Les graphismes ne sont pas pret"
 			}
 		]
 	}
@@ -91,7 +94,6 @@ func next_text():
 			if current_index < current.size() and "check" in current[current_index]:
 				for v in current[current_index]["check"]:
 					if v in variables and variables[v] == current[current_index]["check"][v]:
-						print(v, " match ", variables[v])
 						continue_loop = false
 			else:
 				continue_loop = false
