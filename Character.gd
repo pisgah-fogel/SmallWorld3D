@@ -3,6 +3,7 @@ extends KinematicBody
 export var speed = 200
 export var gravity = 600
 export var max_inventory = 5*2
+export var fishing_distance = 4
 var velocity = Vector2(0, 0)
 
 onready var mMesh = $Trex
@@ -10,8 +11,9 @@ onready var mAnimationPlayer = $Trex/AnimationPlayer
 onready var mCollisionShape = $Trex/KinematicBody/CollisionShape
 onready var mTimer = $Timer
 
-enum State {MOVE, ACTION, INVENTORY}
+enum State {MOVE, ACTION, INVENTORY, FISHING}
 var mState = State.MOVE
+var Item = preload("res://Item.gd")
 
 var objectList = []
 class Wallet:
@@ -36,6 +38,8 @@ func _process(delta):
 			pass
 		State.ACTION:
 			pass
+		State.FISHING:
+			state_fishing(delta)
 
 func _end_animation(anim_name):
 	match mState:
@@ -55,16 +59,18 @@ func _unhandled_key_input(event):
 	match mState:
 		State.MOVE:
 			if event.is_action_pressed("ui_action"):
-				start_action()
+				if objectList.size() > 0 and objectList[0] != null and objectList[0].id == Item._id.ID_FISHINGROT:
+					start_fishing()
+				else:
+					start_action()
 			elif event.is_action_pressed("ui_inventory"):
 				start_inventory()
 			elif event.is_action_pressed("ui_cheat"):
 				mWallet.money += 10
 				if haveSpareSpace():
-					var Item = load('res://Item.gd')
 					var object = Item.new()
-					#object.id = Item._id.ID_GRASS
-					object.id = randi()%5
+					#object.id = Item._id.ID_FISHINGROT
+					object.id = randi()%20
 					object.name = Item._name[object.id]
 					object.data["quality"] = randi()%3;
 					addObjectToInventory(object)
@@ -76,7 +82,34 @@ func _unhandled_key_input(event):
 		State.INVENTORY:
 			if event.is_action_pressed("ui_cancel") or event.is_action_pressed("ui_inventory"):
 				end_inventory()
+		State.FISHING:
+			event_fishing(event)
 
+##################### FISHING  ########################
+var mBait = null
+func start_fishing():
+	mState = State.FISHING
+	reset_movements_and_picking()
+	if mBait == null:
+		var Bait = load("res://StaticBait.tscn")
+		mBait = Bait.instance()
+		mBait.translation = Vector3(fishing_distance*sin(mMesh.rotation.y), 0, fishing_distance*cos(mMesh.rotation.y))
+		mBait.connect("fishCatched", self, "_fishCatched")
+		mBait.connect("baitEaten", self, "_baitEaten")
+		add_child(mBait)
+	
+func state_fishing(delta):
+	pass
+
+func event_fishing(event):
+	if event.is_action_pressed("ui_cancel") or event.is_action_pressed("ui_inventory"):
+		stop_fishing()
+	# TODO: pull bait back if ui_action and frighten or catch...
+
+func stop_fishing():
+	if mBait:
+		mBait.queue_free()
+	mState = State.MOVE
 ################## INVENTORY STATE ####################
 const Inventory = preload("res://Inventory.tscn")
 var inventoryInstance = null
