@@ -13,14 +13,14 @@ var mState = State.ENTER
 export(int) var spawnDepth = -2
 export(int) var mDepth = 0
 
-export(int) var default_speed = 30
+export(int) var default_speed = 15
 export(int) var speed = 1
 
 # 16 < x < 20
 # -12 < z < 5
 export(Rect2) var spawner_zone = Rect2(17,-12,4,5+12)
 
-onready var mAnimationPlayer = $Fish/AnimationPlayer
+var mAnimationPlayer = null
 onready var mTimer = $Timer
 
 var destination = Vector2.ZERO
@@ -34,9 +34,27 @@ var mItem = null
 func _ready():
 	self.rotation.y = randf()
 	mItem = Item.new()
-	mItem.id = Item._id.ID_FISH
+	if randi()%100 > 90:
+		mItem.id = Item._id.ID_TURTLE
+	else:
+		mItem.id = Item._id.ID_FISH
+		print("Creating fish")
 	mItem.name = Item._name[mItem.id]
 	mItem.data["size"] = randi()%5+6
+	var mMesh = null
+	match mItem.id:
+		Item._id.ID_FISH:
+			var Fish = load("res://gfx/Fish.glb")
+			mMesh = Fish.instance()
+		Item._id.ID_TURTLE:
+			var Turtle = load("res://gfx/SwimmingTurtle.glb")
+			mMesh = Turtle.instance()
+	if mMesh:
+		add_child(mMesh)
+		mAnimationPlayer = mMesh.get_node("AnimationPlayer")
+		mMesh.rotation = Vector3(0, 3.14/2, 0)
+	else:
+		print("Error can't load Fish's mesh")
 	
 	start_enter()
 

@@ -1,4 +1,4 @@
-[gd_scene load_steps=31 format=2]
+[gd_scene load_steps=30 format=2]
 
 [ext_resource path="res://gfx/Dirt.glb" type="PackedScene" id=1]
 [ext_resource path="res://gfx/Robot.glb" type="PackedScene" id=2]
@@ -12,7 +12,6 @@
 [ext_resource path="res://Water.shader" type="Shader" id=13]
 [ext_resource path="res://StaticBin.gd" type="Script" id=14]
 [ext_resource path="res://StaticShop.gd" type="Script" id=15]
-[ext_resource path="res://gfx/Fish.glb" type="PackedScene" id=16]
 [ext_resource path="res://SpatialFish.gd" type="Script" id=17]
 
 [sub_resource type="BoxShape" id=1]
@@ -238,17 +237,9 @@ mesh = SubResource( 14 )
 material/0 = null
 
 [node name="SpatialFish" type="Spatial" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 19.9964, 0, -0.00847852 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 19.9964, -2.02166, -0.00847852 )
 script = ExtResource( 17 )
-
-[node name="Fish" parent="SpatialFish" instance=ExtResource( 16 )]
-transform = Transform( -1.62921e-07, 0, -1, 0, 1, 0, 1, 0, -1.62921e-07, 8.98766, -2.55138, 0.69331 )
-
-[node name="Fish" parent="SpatialFish/Fish" index="0"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -1.19209e-07, 0, -0.70945 )
-
-[node name="AnimationPlayer" parent="SpatialFish/Fish" index="1"]
-autoplay = "Static"
+mDepth = -1
 
 [node name="FishView" type="Area" parent="SpatialFish"]
 collision_layer = 0
@@ -275,5 +266,3 @@ shape = SubResource( 16 )
 [connection signal="body_entered" from="SpatialFish/PredatorView" to="SpatialFish" method="_on_PredatorView_body_entered"]
 
 [editable path="StaticChest/Chest"]
-
-[editable path="SpatialFish/Fish"]
