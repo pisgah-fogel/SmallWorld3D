@@ -3,7 +3,7 @@ extends KinematicBody
 export var speed = 200
 export var gravity = 600
 export var max_inventory = 5*2
-export var fishing_distance = 4
+export var fishing_distance = 5
 var velocity = Vector2(0, 0)
 
 onready var mMesh = $Trex
@@ -11,7 +11,7 @@ onready var mAnimationPlayer = $Trex/AnimationPlayer
 onready var mCollisionShape = $Trex/KinematicBody/CollisionShape
 onready var mTimer = $Timer
 
-enum State {MOVE, ACTION, INVENTORY, FISHING}
+enum State {MOVE, ACTION, INVENTORY, FISHING, GOTFISH}
 var mState = State.MOVE
 var Item = preload("res://Item.gd")
 
@@ -40,6 +40,8 @@ func _process(delta):
 			pass
 		State.FISHING:
 			state_fishing(delta)
+		State.GOTFISH:
+			state_gotFish(delta)
 
 func _end_animation(anim_name):
 	match mState:
@@ -109,7 +111,51 @@ func event_fishing(event):
 func stop_fishing():
 	if mBait:
 		mBait.queue_free()
+		mBait = null
 	mState = State.MOVE
+
+var newFish = null
+func _fishCatched(fish):
+	newFish = fish
+	if mBait != null:
+		mBait.queue_free()
+		mBait = null
+	newFish._show_yourself()
+	# TODO: rotate to be pretty for the player
+	start_gotFish()
+
+func _baitEaten(fish):
+	print("Player's bait eaten, start move state again")
+	stop_fishing()
+
+###################### GOTFISH ########################
+
+func start_gotFish():
+	mState = State.GOTFISH
+	print("Player is entering gotfish state")
+
+func state_gotFish(delta):
+	# TODO move the fish to the character
+	if newFish != null:
+		print("Translate fish to player")
+		newFish.translate((translation - newFish.translation).normalized()*delta*50)
+		if newFish.translation.distance_to(translation) < 1:
+			stop_gotFish()
+	else:
+		stop_gotFish()
+
+func stop_gotFish():
+	if newFish != null:
+		print("Player catched ", newFish.mItem.name)
+		if haveSpareSpace():
+			addObjectToInventory(newFish.mItem)
+		else:
+			print("Inventory is full")
+			# TODO handle full inventory
+		newFish.queue_free()
+		newFish = null
+	stop_fishing() #Free bait & start_move()
+
 ################## INVENTORY STATE ####################
 const Inventory = preload("res://Inventory.tscn")
 var inventoryInstance = null

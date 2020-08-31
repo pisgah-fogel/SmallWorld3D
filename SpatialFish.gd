@@ -3,7 +3,8 @@ extends Spatial
 enum State {
 	ENTER,
 	WANDER,
-	SCARED
+	SCARED,
+	CHASING
 }
 
 var mState = State.ENTER
@@ -11,7 +12,7 @@ var mState = State.ENTER
 export(int) var spawnDepth = -2
 export(int) var mDepth = 0
 
-export(int) var default_speed = 50
+export(int) var default_speed = 30
 export(int) var speed = 1
 
 # 16 < x < 20
@@ -27,8 +28,15 @@ var current_orientation : float = 0
 func random_vec_in_zone():
 	return Vector2(spawner_zone.position.x+spawner_zone.size.x*randf(), spawner_zone.position.y+spawner_zone.size.y*randf())
 
+const Item = preload("res://Item.gd")
+var mItem = null
 func _ready():
 	self.rotation.y = randf()*2*3.14
+	mItem = Item.new()
+	mItem.id = Item._id.ID_FISH
+	mItem.name = Item._name[mItem.id]
+	mItem.data["size"] = randi()%5+6
+	
 	start_enter()
 
 func _process(delta):
@@ -41,6 +49,8 @@ func _process(delta):
 			state_enter(delta)
 		State.SCARED:
 			state_scared(delta)
+		State.CHASING:
+			state_chasing(delta)
 
 func _unhandled_key_input(event):
 	match mState:
@@ -51,17 +61,47 @@ func calc_angle(a:Vector3, b:Vector3) -> float:
 	return atan2(b.z - a.z, b.x - a.x)
 
 func _on_FishView_body_entered(body):
-	if mState == State.SCARED:
-		return
-	# TODO: Fix this angle
-	# TODO: smooth angle
-	self.rotation.y = calc_angle(body.translation, self.translation)
-	print(self.rotation.y, " should be around -1.57")
-	start_scared()
+	print("Fish saw the player")
+	if mState == State.WANDER: # TODO: also on CHASING
+		# TODO: Fix this angle
+		# TODO: smooth angle
+		self.rotation.y = calc_angle(body.translation, self.translation)
+		print(self.rotation.y, " should be around -1.57")
+		start_scared()
 
-
+var food = null
 func _on_PredatorView_body_entered(body):
 	print("Body entered predatorView")
+	if mState == State.WANDER:
+		print("Start chasing")
+		start_chasing()
+		food = body
+
+######################## CHASING ########################
+
+func start_chasing():
+	mState = State.CHASING
+	speed = default_speed
+
+func state_chasing(delta):
+	if food != null:
+		var baitLoc = food.to_global(food.translation)
+		if Vector2(translation.x, translation.z).distance_to(Vector2(baitLoc.x, baitLoc.z)) < 0.05:
+			#food.tasting() # TODO: add randomness
+			#food.beating() # TODO: measure reaction time and escape...
+			food.catchAFish(self)
+		else:
+			# move to bait
+			self.look_at(baitLoc, Vector3(0, 1, 0))
+			translate(Vector3(0, 0, -delta*speed*0.05))
+	else:
+		print("Bait disapeared, fish start wandering again")
+		start_wander()
+
+func _show_yourself():
+	pass
+	# TODO: play anim when caugth
+	# TODO enter CAUGHT state
 
 #######################  ENTER   ##########################
 
