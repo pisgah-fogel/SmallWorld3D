@@ -133,12 +133,10 @@ func _baitEaten(fish):
 
 func start_gotFish():
 	mState = State.GOTFISH
-	print("Player is entering gotfish state")
 
 func state_gotFish(delta):
 	# TODO move the fish to the character
 	if newFish != null:
-		print("Translate fish to player")
 		var fishGlobal = newFish.to_global(Vector3.ZERO)
 		var trans = (translation - fishGlobal).normalized()
 		if fishGlobal.y < translation.y + high_caught_fish:
