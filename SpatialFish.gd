@@ -32,7 +32,7 @@ func random_vec_in_zone():
 const Item = preload("res://Item.gd")
 var mItem = null
 func _ready():
-	self.rotation.y = randf()*2*3.14
+	self.rotation.y = randf()
 	mItem = Item.new()
 	mItem.id = Item._id.ID_FISH
 	mItem.name = Item._name[mItem.id]
@@ -102,6 +102,7 @@ func state_chasing(delta):
 
 func _show_yourself():
 	mState = State.CAUGHT
+	rotation = Vector3(0, 3.14/2, 0)
 
 #######################  ENTER   ##########################
 

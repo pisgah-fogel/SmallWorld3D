@@ -7,9 +7,9 @@ export var fishing_distance = 5
 export (float) var high_caught_fish = 3
 var velocity = Vector2(0, 0)
 
-onready var mMesh = $Trex
-onready var mAnimationPlayer = $Trex/AnimationPlayer
-onready var mCollisionShape = $Trex/KinematicBody/CollisionShape
+onready var mMesh = $Robot
+onready var mAnimationPlayer = $Robot/AnimationPlayer
+var mCollisionShape = null
 onready var mTimer = $Timer
 
 enum State {MOVE, ACTION, INVENTORY, FISHING, GOTFISH}
@@ -22,6 +22,10 @@ class Wallet:
 var mWallet = Wallet.new()
 
 func _ready():
+	var ActionCollision = load("res://ActionCollision.tscn")
+	var mActionCollision = ActionCollision.instance()
+	mCollisionShape = mActionCollision.get_node("CollisionShape")
+	mMesh.add_child(mActionCollision)
 	mAnimationPlayer.connect("animation_finished", self, "_end_animation")
 	mAnimationPlayer.playback_speed = 2
 	Input.set_mouse_mode(Input.MOUSE_MODE_HIDDEN)
@@ -90,9 +94,14 @@ func _unhandled_key_input(event):
 
 ##################### FISHING  ########################
 var mBait = null
+var mFishingRot = null
 func start_fishing():
 	mState = State.FISHING
 	reset_movements_and_picking()
+	if mFishingRot == null:
+		var FishingRot = load("res://gfx/FishingRot.glb")
+		mFishingRot = FishingRot.instance()
+		mMesh.add_child(mFishingRot)
 	if mBait == null:
 		var Bait = load("res://StaticBait.tscn")
 		mBait = Bait.instance()
@@ -113,6 +122,9 @@ func stop_fishing():
 	if mBait:
 		mBait.queue_free()
 		mBait = null
+	if mFishingRot:
+		mFishingRot.queue_free()
+		mFishingRot = null
 	mState = State.MOVE
 
 var newFish = null
@@ -138,12 +150,17 @@ func state_gotFish(delta):
 	# TODO move the fish to the character
 	if newFish != null:
 		var fishGlobal = newFish.to_global(Vector3.ZERO)
-		var trans = (translation - fishGlobal).normalized()
+		var trans = Vector3.ZERO
 		if fishGlobal.y < translation.y + high_caught_fish:
-			trans.y = 1
-		newFish.global_translate(trans*delta*1.0)
-		if Vector2(fishGlobal.x, fishGlobal.z).distance_to(Vector2(translation.x, translation.y)) < 1:
+			trans.y = 0.1
+		else:
+			trans = (translation - fishGlobal).normalized()
+			trans.y = 0
+		newFish.global_translate(trans*delta*10.0)
+		if Vector2(fishGlobal.x, fishGlobal.z).distance_to(Vector2(translation.x, translation.z)) < 1:
 			stop_gotFish()
+			print("Fish ", fishGlobal.x, " ", fishGlobal.z)
+			print("Me ", translation.x, " ", translation.y)
 	else:
 		stop_gotFish()
 
