@@ -66,7 +66,7 @@ func _unhandled_key_input(event):
 	match mState:
 		State.MOVE:
 			if event.is_action_pressed("ui_action"):
-				if objectList.size() > 0 and objectList[0] != null and objectList[0].id == Item._id.ID_FISHINGROT:
+				if canUseFishingRot():
 					start_fishing()
 				else:
 					start_action()
@@ -93,6 +93,9 @@ func _unhandled_key_input(event):
 			event_fishing(event)
 
 ##################### FISHING  ########################
+func canUseFishingRot():
+	return objectList.size() > 0 and objectList[0] != null and objectList[0].id == Item._id.ID_FISHINGROT
+
 var mBait = null
 var mFishingRot = null
 func start_fishing():
@@ -109,6 +112,7 @@ func start_fishing():
 		mBait.connect("fishCatched", self, "_fishCatched")
 		mBait.connect("baitEaten", self, "_baitEaten")
 		add_child(mBait)
+	mFishingRot.get_node("AnimationPlayer").play("SwingTrack")
 	
 func state_fishing(delta):
 	pass
