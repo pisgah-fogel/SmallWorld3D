@@ -29,6 +29,7 @@ func _ready():
 	mAnimationPlayer.connect("animation_finished", self, "_end_animation")
 	mAnimationPlayer.playback_speed = 2
 	Input.set_mouse_mode(Input.MOUSE_MODE_HIDDEN)
+	equipeItem()
 
 func _physics_process(delta):
 	match mState:
@@ -96,15 +97,18 @@ func _unhandled_key_input(event):
 func canUseFishingRot():
 	return objectList.size() > 0 and objectList[0] != null and objectList[0].id == Item._id.ID_FISHINGROT
 
+func equipeFishingRot():
+	if mFishingRot == null:
+		var FishingRot = load("res://gfx/FishingRot.glb")
+		mFishingRot = FishingRot.instance()
+		mMesh.add_child(mFishingRot)
+
 var mBait = null
 var mFishingRot = null
 func start_fishing():
 	mState = State.FISHING
 	reset_movements_and_picking()
-	if mFishingRot == null:
-		var FishingRot = load("res://gfx/FishingRot.glb")
-		mFishingRot = FishingRot.instance()
-		mMesh.add_child(mFishingRot)
+	equipeFishingRot() # Just to be sure
 	if mBait == null:
 		var Bait = load("res://StaticBait.tscn")
 		mBait = Bait.instance()
@@ -209,6 +213,7 @@ func end_inventory():
 		if inventoryInstance.mChest != null:
 			inventoryInstance.mChest.closeChest()
 		inventoryInstance.queue_free()
+	equipeItem()
 
 func _on_chestOpenned(chest):
 	mState = State.INVENTORY
@@ -323,6 +328,13 @@ func load(save_game: Resource):
 	teleport_if_falls()
 
 #####################  Utils ############################
+
+func equipeItem():
+	if canUseFishingRot():
+		equipeFishingRot()
+	elif mFishingRot:
+		mFishingRot.queue_free()
+		mFishingRot = null
 
 func teleport_if_falls():
 	if self.translation.y < -10:
