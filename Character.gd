@@ -29,7 +29,6 @@ func _ready():
 	mAnimationPlayer.connect("animation_finished", self, "_end_animation")
 	mAnimationPlayer.playback_speed = 2
 	Input.set_mouse_mode(Input.MOUSE_MODE_HIDDEN)
-	equipeItem()
 
 func _physics_process(delta):
 	match mState:
@@ -326,6 +325,7 @@ func load(save_game: Resource):
 	mWallet.money = save_game.data["character_money"]
 	
 	teleport_if_falls()
+	equipeItem()
 
 #####################  Utils ############################
 
