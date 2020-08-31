@@ -4,6 +4,7 @@ export var speed = 200
 export var gravity = 600
 export var max_inventory = 5*2
 export var fishing_distance = 5
+export (float) var high_caught_fish = 3
 var velocity = Vector2(0, 0)
 
 onready var mMesh = $Trex
@@ -138,8 +139,12 @@ func state_gotFish(delta):
 	# TODO move the fish to the character
 	if newFish != null:
 		print("Translate fish to player")
-		newFish.translate((translation - newFish.translation).normalized()*delta*50)
-		if newFish.translation.distance_to(translation) < 1:
+		var fishGlobal = newFish.to_global(Vector3.ZERO)
+		var trans = (translation - fishGlobal).normalized()
+		if fishGlobal.y < translation.y + high_caught_fish:
+			trans.y = 1
+		newFish.global_translate(trans*delta*1.0)
+		if Vector2(fishGlobal.x, fishGlobal.z).distance_to(Vector2(translation.x, translation.y)) < 1:
 			stop_gotFish()
 	else:
 		stop_gotFish()

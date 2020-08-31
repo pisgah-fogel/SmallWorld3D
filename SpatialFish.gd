@@ -4,7 +4,8 @@ enum State {
 	ENTER,
 	WANDER,
 	SCARED,
-	CHASING
+	CHASING,
+	CAUGHT
 }
 
 var mState = State.ENTER
@@ -17,7 +18,7 @@ export(int) var speed = 1
 
 # 16 < x < 20
 # -12 < z < 5
-export(Rect2) var spawner_zone = Rect2(16,-12,4,5+12)
+export(Rect2) var spawner_zone = Rect2(17,-12,4,5+12)
 
 onready var mAnimationPlayer = $Fish/AnimationPlayer
 onready var mTimer = $Timer
@@ -61,8 +62,9 @@ func calc_angle(a:Vector3, b:Vector3) -> float:
 	return atan2(b.z - a.z, b.x - a.x)
 
 func _on_FishView_body_entered(body):
-	print("Fish saw the player")
-	if mState == State.WANDER: # TODO: also on CHASING
+	
+	if mState == State.WANDER or mState == State.CHASING: # TODO: also on CHASING
+		print("Fish saw the player")
 		# TODO: Fix this angle
 		# TODO: smooth angle
 		self.rotation.y = calc_angle(body.translation, self.translation)
@@ -85,7 +87,7 @@ func start_chasing():
 
 func state_chasing(delta):
 	if food != null:
-		var baitLoc = food.to_global(food.translation)
+		var baitLoc = food.to_global(Vector3(0, 0, 0))
 		if Vector2(translation.x, translation.z).distance_to(Vector2(baitLoc.x, baitLoc.z)) < 0.05:
 			#food.tasting() # TODO: add randomness
 			#food.beating() # TODO: measure reaction time and escape...
@@ -99,9 +101,7 @@ func state_chasing(delta):
 		start_wander()
 
 func _show_yourself():
-	pass
-	# TODO: play anim when caugth
-	# TODO enter CAUGHT state
+	mState = State.CAUGHT
 
 #######################  ENTER   ##########################
 
