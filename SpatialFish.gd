@@ -16,9 +16,9 @@ export(int) var mDepth = 0
 export(int) var default_speed = 15
 export(int) var speed = 1
 
-# 16 < x < 20
-# -12 < z < 5
-export(Rect2) var spawner_zone = Rect2(17,-12,4,5+12)
+# -23 < x < 18
+# -24 < z < -19
+export(Rect2) var spawner_zone = Rect2(-23,-24,5,23+18)
 
 var mAnimationPlayer = null
 onready var mTimer = $Timer
