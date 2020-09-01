@@ -4,7 +4,7 @@ export var speed = 200
 export var gravity = 600
 export var max_inventory = 5*2
 export var fishing_distance = 5
-export (float) var high_caught_fish = 3
+export (float) var high_caught_fish = 1
 var velocity = Vector2(0, 0)
 
 onready var mMesh = $Robot
@@ -111,7 +111,10 @@ func start_fishing():
 	if mBait == null:
 		var Bait = load("res://StaticBait.tscn")
 		mBait = Bait.instance()
-		mBait.translation = Vector3(fishing_distance*sin(mMesh.rotation.y), 0, fishing_distance*cos(mMesh.rotation.y))
+		
+		# Local movement (relative to the player)
+		mBait.translation = Vector3(fishing_distance*sin(mMesh.rotation.y), -1, fishing_distance*cos(mMesh.rotation.y))
+		
 		mBait.connect("fishCatched", self, "_fishCatched")
 		mBait.connect("baitEaten", self, "_baitEaten")
 		add_child(mBait)
@@ -126,7 +129,7 @@ func event_fishing(event):
 		stop_fishing()
 	elif event.is_action_pressed("ui_action"):
 		if mBait:
-			# Move bait to the player
+			# Move bait to the player (using global coordinate, in case of bait rotation...)
 			var dir = (get_global_transform().origin - mBait.get_global_transform().origin).normalized()
 			mBait.global_translate(dir*0.1)
 			if mBait.get_global_transform().origin.distance_to(get_global_transform().origin) < 1.5:
@@ -163,20 +166,14 @@ func start_gotFish():
 	mState = State.GOTFISH
 
 func state_gotFish(delta):
-	# TODO move the fish to the character
 	if newFish != null:
-		#var fishGlobal = newFish.get_global_transform().origin
-		var fishGlobal = newFish.to_global(Vector3.ZERO)
-		var trans = Vector3.ZERO
-		if fishGlobal.y < translation.y + high_caught_fish:
-			trans.y = 0.1
-		else:
-			trans = (translation - fishGlobal).normalized()
-			trans.y = 0
-		newFish.global_translate(trans*delta*10.0)
-		if Vector2(fishGlobal.x, fishGlobal.z).distance_to(Vector2(translation.x, translation.z)) < 1:
+		# ToDo: make the fish jump out of the water
+		var fishGlobal = newFish.global_transform.origin
+		var targetGlobal = mMesh.global_transform.origin + Vector3(0, high_caught_fish, 0)
+		var trans = (targetGlobal - fishGlobal).normalized()
+		newFish.global_translate(trans*delta*5.0)
+		if Vector2(fishGlobal.x, fishGlobal.z).distance_to(Vector2(targetGlobal.x, targetGlobal.z)) < 1:
 			stop_gotFish()
-			
 	else:
 		stop_gotFish()
 

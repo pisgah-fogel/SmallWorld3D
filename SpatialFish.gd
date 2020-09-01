@@ -82,14 +82,12 @@ func _unhandled_key_input(event):
 		State.WANDER:
 			event_wander(event)
 
-func calc_angle(a:Vector3, b:Vector3) -> float:
-	return atan2(b.z - a.z, b.x - a.x)
-
 func _on_FishView_body_entered(body):
-	if mState == State.WANDER or mState == State.CHASING: # TODO: also on CHASING
-		# TODO: Fix this angle
+	if mState == State.WANDER or mState == State.CHASING:
 		# TODO: smooth angle
-		self.rotation.y = calc_angle(body.translation, self.translation)
+		var a = self.get_global_transform().looking_at(body.get_global_transform().origin, Vector3(0, 1, 0))
+		a = a.rotated(Vector3(0, 1, 0), 3.14)
+		self.global_transform.basis = a.basis
 		start_scared()
 
 var food = null
