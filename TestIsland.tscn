@@ -28,18 +28,18 @@ size = Vector2( 7, 45 )
 subdivide_width = 3
 subdivide_depth = 3
 
-[sub_resource type="BoxShape" id=7]
+[sub_resource type="BoxShape" id=5]
 extents = Vector3( 0.450746, 0.594694, 0.525791 )
 
-[sub_resource type="BoxShape" id=8]
+[sub_resource type="BoxShape" id=6]
 extents = Vector3( 0.355825, 0.53376, 0.412701 )
 
-[sub_resource type="CapsuleMesh" id=9]
+[sub_resource type="CapsuleMesh" id=7]
 
-[sub_resource type="BoxShape" id=5]
+[sub_resource type="BoxShape" id=8]
 extents = Vector3( 0.415165, 0.334346, 0.406846 )
 
-[sub_resource type="BoxShape" id=6]
+[sub_resource type="BoxShape" id=9]
 extents = Vector3( 0.264449, 0.230816, 0.316052 )
 
 [sub_resource type="CapsuleMesh" id=10]
@@ -73,7 +73,7 @@ collision_mask = 0
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 4.10096, -1.33088, -3.03452 )
 
 [node name="CollisionShape" type="CollisionShape" parent="BeginnerIsland"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.00074482, -0.409451, -2.67763 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.00074482, -0.564212, -2.67763 )
 shape = SubResource( 1 )
 
 [node name="StaticBody" type="StaticBody" parent="BeginnerIsland"]
@@ -100,15 +100,16 @@ mesh = SubResource( 4 )
 material/0 = null
 
 [node name="StaticChest" parent="." instance=ExtResource( 5 )]
+transform = Transform( 0.0988334, 0, -0.995104, 0, 1, 0, 0.995104, 0, 0.0988334, 6.5272, -0.675488, -10.5905 )
 
 [node name="StaticBin" type="StaticBody" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.356909, -1.6172 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.564449, -1.6172 )
 collision_mask = 0
 script = ExtResource( 4 )
 
 [node name="CollisionShape" type="CollisionShape" parent="StaticBin"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.78019, -5.57876 )
-shape = SubResource( 7 )
+shape = SubResource( 5 )
 
 [node name="Area" type="Area" parent="StaticBin"]
 collision_layer = 16
@@ -116,21 +117,21 @@ collision_mask = 2147483648
 
 [node name="CollisionShape" type="CollisionShape" parent="StaticBin/Area"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.013274, 1.72079, -5.62444 )
-shape = SubResource( 8 )
+shape = SubResource( 6 )
 
 [node name="MeshInstance" type="MeshInstance" parent="StaticBin"]
 transform = Transform( 0.404135, -0.0181976, -0.00195376, 0.00139799, 0.0800606, -0.456523, 0.0174327, 0.380154, 0.0651294, 0, 1.72775, -5.58771 )
-mesh = SubResource( 9 )
+mesh = SubResource( 7 )
 material/0 = null
 
 [node name="StaticShop" type="StaticBody" parent="."]
-transform = Transform( 0.0988334, 0, -0.995104, 0, 1, 0, 0.995104, 0, 0.0988334, 3.87369, -0.265144, -6.9723 )
+transform = Transform( 0.0988334, 0, -0.995104, 0, 1, 0, 0.995104, 0, 0.0988334, 3.87369, -0.740371, -6.9723 )
 collision_mask = 0
 script = ExtResource( 1 )
 
 [node name="CollisionShape" type="CollisionShape" parent="StaticShop"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0146537, 1.70022, 0.24458 )
-shape = SubResource( 5 )
+shape = SubResource( 8 )
 
 [node name="Area" type="Area" parent="StaticShop"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -2.88247, 0.446999, 0.589488 )
@@ -139,7 +140,7 @@ collision_mask = 2147483648
 
 [node name="CollisionShape" type="CollisionShape" parent="StaticShop/Area"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 2.86033, 1.3237, -0.35132 )
-shape = SubResource( 6 )
+shape = SubResource( 9 )
 
 [node name="MeshInstance" type="MeshInstance" parent="StaticShop"]
 transform = Transform( -4.84288e-08, 0.3, -4.88762e-08, 0, -4.88762e-08, -0.3, -0.3, -4.84288e-08, 7.99361e-15, -0.0236859, 1.63673, 0.238489 )
@@ -170,7 +171,7 @@ shape = SubResource( 12 )
 [node name="Timer" type="Timer" parent="SpatialFish"]
 
 [node name="Foret" type="Spatial" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -23.2782, 0, 14.0576 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -23.2782, -0.333684, 14.0576 )
 
 [node name="StaticTree" type="StaticBody" parent="Foret"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 18.2543, -0.348624, -19.457 )
@@ -259,7 +260,7 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.287697, 1.92442, 1.06604 )
 shape = SubResource( 14 )
 
 [node name="TestHouseExt" parent="StaticTestHouse" instance=ExtResource( 8 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2.10963, 0 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.785883, 0 )
 
 [node name="Area" type="Area" parent="StaticTestHouse"]
 collision_layer = 0

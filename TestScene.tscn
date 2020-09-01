@@ -17,6 +17,7 @@ script = ExtResource( 9 )
 
 [node name="InterpolatedCamera" type="InterpolatedCamera" parent="."]
 transform = Transform( 1, 0, 0, 0, 0.976635, 0.214906, 0, -0.214906, 0.976635, 1.36024, 4.27465, 13.7618 )
+doppler_tracking = 2
 current = true
 fov = 50.0
 near = 0.01
@@ -33,7 +34,7 @@ collision_layer = 2
 script = ExtResource( 3 )
 
 [node name="Robot" parent="Character" instance=ExtResource( 2 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.969508, 0 )
 
 [node name="CameraTarget" type="Spatial" parent="Character"]
 transform = Transform( 1, 0, 0, 0, 0.837089, 0.547067, 0, -0.547067, 0.837089, 0.85197, 7.44026, 9.56242 )
