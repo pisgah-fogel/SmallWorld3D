@@ -5,7 +5,9 @@ enum State {
 	WANDER,
 	SCARED,
 	CHASING,
-	CAUGHT
+	CAUGHT,
+	BEATING,
+	GOBACK
 }
 
 var mState = State.ENTER
@@ -15,6 +17,8 @@ export(int) var mDepth = 0
 
 export(int) var default_speed = 2
 export(int) var speed = 2
+
+export(float) var timer_objectif = 1
 
 # -23 < x < 18
 # -24 < z < -19
@@ -65,6 +69,8 @@ func _process(delta):
 			state_scared(delta)
 		State.CHASING:
 			state_chasing(delta)
+		State.GOBACK:
+			state_goback(delta)
 
 func _unhandled_key_input(event):
 	match mState:
@@ -97,9 +103,15 @@ func state_chasing(delta):
 	if food != null:
 		var baitLoc = food.to_global(Vector3(0, 0, 0))
 		if Vector2(translation.x, translation.z).distance_to(Vector2(baitLoc.x, baitLoc.z)) < 0.05:
-			#food.tasting() # TODO: add randomness
-			#food.beating() # TODO: measure reaction time and escape...
-			food.catchAFish(self)
+			food.beating()
+			if randi()%100>60:
+				print("Beating")
+				mState = State.BEATING
+				mTimer.start(timer_objectif)
+			else:
+				print("Taste")
+				food.tasting()
+				start_goback()
 		else:
 			# move to bait
 			self.look_at(baitLoc, Vector3(0, 1, 0))
@@ -109,7 +121,35 @@ func state_chasing(delta):
 
 func _show_yourself():
 	mState = State.CAUGHT
+	mTimer.start(10)
 	rotation = Vector3(0, 3.14/2, 0)
+
+func _on_Timer_timeout():
+	if mState == State.BEATING:
+		if food:
+			food.catchAFish(self)
+		else:
+			start_wander()
+	if mState == State.CAUGHT:
+		start_wander()
+		
+#######################  GOBACK  ##########################
+var goback_duration = 2.2
+func start_goback():
+	mState = State.GOBACK
+	goback_duration = randf()*2+1
+	speed = default_speed/2
+
+func state_goback(delta):
+	goback_duration -= delta
+	if goback_duration <= 0:
+		start_chasing()
+	if food != null:
+		var baitLoc = food.to_global(Vector3(0, 0, 0))
+		self.look_at(baitLoc, Vector3(0, 1, 0))
+		translate(Vector3(0, 0, delta*speed))
+	else:
+		start_wander()
 
 #######################  ENTER   ##########################
 

@@ -1,6 +1,7 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://StaticBait.gd" type="Script" id=1]
+[ext_resource path="res://ParticlesSplash.tscn" type="PackedScene" id=2]
 
 [sub_resource type="SphereShape" id=1]
 radius = 0.245584
@@ -8,7 +9,7 @@ radius = 0.245584
 [sub_resource type="CapsuleMesh" id=2]
 
 [node name="StaticBait" type="StaticBody"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 18.4487, -0.0741369, -4.03749 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.335648, -0.0741369, -0.0483732 )
 collision_layer = 32
 collision_mask = 2147483648
 script = ExtResource( 1 )
@@ -20,3 +21,10 @@ shape = SubResource( 1 )
 transform = Transform( 0.1, 0, 0, 0, -1.62921e-08, -0.1, 0, 0.1, -1.62921e-08, 0, 0, 0 )
 mesh = SubResource( 2 )
 material/0 = null
+
+[node name="Particles" parent="." instance=ExtResource( 2 )]
+transform = Transform( -0.240057, 0.0188884, -0.0596434, -0.100085, -0.261943, 0.0355418, -0.149518, 0.145015, 0.0719684, -0.0189568, 0.354536, -0.265752 )
+material_override = null
+amount = 1
+lifetime = 1.51
+speed_scale = 2.5

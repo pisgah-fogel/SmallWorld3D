@@ -1,0 +1,32 @@
+[gd_scene load_steps=4 format=2]
+
+[sub_resource type="SpatialMaterial" id=1]
+flags_unshaded = true
+vertex_color_use_as_albedo = true
+params_blend_mode = 1
+params_billboard_mode = 3
+particles_anim_h_frames = 1
+particles_anim_v_frames = 1
+particles_anim_loop = false
+albedo_color = Color( 0, 0.345098, 1, 1 )
+
+[sub_resource type="ParticlesMaterial" id=2]
+emission_shape = 1
+emission_sphere_radius = 0.2
+spread = 0.0
+gravity = Vector3( 0, 0, 0 )
+angular_velocity = 30.0
+linear_accel = 4.0
+angle = 360.0
+angle_random = 1.0
+
+[sub_resource type="PrismMesh" id=3]
+
+[node name="Particles" type="Particles"]
+transform = Transform( -0.199293, -0.0168017, 0, 0.0168017, -0.199293, 0, 0, 0, 0.2, 0.152105, 0.21888, 0.0762534 )
+material_override = SubResource( 1 )
+emitting = false
+amount = 2
+visibility_aabb = AABB( -1.90635, -2.74375, -2.4952, 3.81269, 5.4875, 4.99039 )
+process_material = SubResource( 2 )
+draw_pass_1 = SubResource( 3 )
