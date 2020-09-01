@@ -17,11 +17,11 @@ export(int) var mDepth = 0
 
 export(int) var default_speed = 2
 export(int) var speed = 2
+export(int) var tasting_propability = 60
 
 export(float) var timer_objectif = 1
+export(int) var bad_luck = 5
 
-# -23 < x < 18
-# -24 < z < -19
 export(Rect2) var spawner_zone = Rect2(-23,-24,5,23+18) setget set_spawner
 
 var mAnimationPlayer = null
@@ -62,6 +62,19 @@ func setFishType(item):
 	else:
 		print("Error can't load Fish's mesh")
 
+func _unhandled_key_input(event):
+	match mState:
+		State.BEATING:
+			if event.is_action_pressed("ui_action"):
+				if randi()%100 > bad_luck:
+					food.catchAFish(self)
+				else:
+					food.baitEatenByFish(self)
+					start_wander() # Or start_scared() ?
+		State.CHASING:
+			if event.is_action_pressed("ui_action"):
+				start_scared()
+
 func _process(delta):
 	if delta > 1:
 		return # Abord if lagging
@@ -76,11 +89,6 @@ func _process(delta):
 			state_chasing(delta)
 		State.GOBACK:
 			state_goback(delta)
-
-func _unhandled_key_input(event):
-	match mState:
-		State.WANDER:
-			event_wander(event)
 
 func _on_FishView_body_entered(body):
 	if mState == State.WANDER or mState == State.CHASING:
@@ -107,12 +115,12 @@ func state_chasing(delta):
 		var baitLoc = food.to_global(Vector3(0, 0, 0))
 		if Vector2(translation.x, translation.z).distance_to(Vector2(baitLoc.x, baitLoc.z)) < 0.05:
 			food.beating()
-			if randi()%100>60:
+			if randi()%100>tasting_propability:
 				print("Beating")
 				mState = State.BEATING
 				mTimer.start(timer_objectif)
 			else:
-				print("Taste")
+				print("Tasting")
 				food.tasting()
 				start_goback()
 		else:
@@ -130,11 +138,10 @@ func _show_yourself():
 func _on_Timer_timeout():
 	if mState == State.BEATING:
 		if food:
-			food.catchAFish(self)
-		else:
-			start_wander()
-	if mState == State.CAUGHT:
+			food.baitEatenByFish(self)
 		start_wander()
+	if mState == State.CAUGHT:
+		start_wander() # Just in case...
 		
 #######################  GOBACK  ##########################
 var goback_duration = 2.2
@@ -200,9 +207,3 @@ func state_wander(delta):
 		# TODO: Smooth rotation
 		self.look_at(Vector3(destination.x, mDepth, destination.y), Vector3(0, 1, 0))
 		translate(Vector3(0, 0, -delta*speed))
-
-func end_wanter():
-	pass
-
-func event_wander(event):
-	pass
