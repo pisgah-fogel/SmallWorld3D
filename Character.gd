@@ -316,6 +316,7 @@ func reset_movements_and_picking():
 
 func save(save_game: Resource):
 	save_game.data["character_transform"] = self.global_transform
+	# TODO: save in witch scene the character is
 	save_game.data["character_objects"] = objectList
 	save_game.data["character_money"] = mWallet.money
 

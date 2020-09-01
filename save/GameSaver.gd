@@ -1,27 +1,32 @@
 # Saves and loads savegame files
-# Each node is responsible for finding itself in the save_game
+# Each node is responsible for finding itself in the mSaveGame
 # dict so saves don't rely on the nodes' path or their source file
 extends Node
 
 const SaveGame = preload('res://save/SaveGame.gd')
 var SAVE_FOLDER: String = "user://save"
 var SAVE_NAME_TEMPLATE: String = "save_%03d.tres"
-
+var mSaveGame = null
 
 func save(id: int):
 	# Passes a SaveGame resource to all nodes to save data from
 	# and writes it to the disk
-	var save_game := SaveGame.new()
-	save_game.game_version = ProjectSettings.get_setting("application/config/version")
+	if mSaveGame == null:
+		mSaveGame = SaveGame.new()
+		print("No game save: let's create one")
+	mSaveGame.game_version = ProjectSettings.get_setting("application/config/version")
 	for node in get_tree().get_nodes_in_group('save'):
-		node.save(save_game)
+		node.save(mSaveGame)
+		
+	for item in mSaveGame.data:
+		print("Saving ", item)
 
 	var directory: Directory = Directory.new()
 	if not directory.dir_exists(SAVE_FOLDER):
 		directory.make_dir_recursive(SAVE_FOLDER)
 
 	var save_path = SAVE_FOLDER.plus_file(SAVE_NAME_TEMPLATE % id)
-	var error: int = ResourceSaver.save(save_path, save_game)
+	var error: int = ResourceSaver.save(save_path, mSaveGame)
 	if error != OK:
 		print('There was an issue writing the save %s to %s' % [id, save_path])
 
@@ -34,7 +39,11 @@ func load(id: int):
 	if not file.file_exists(save_file_path):
 		print("Save file %s doesn't exist" % save_file_path)
 		return
+	
+	mSaveGame = load(save_file_path)
+		
+	for item in mSaveGame.data:
+		print("Get ", item, " back")
 
-	var save_game: Resource = load(save_file_path)
 	for node in get_tree().get_nodes_in_group('save'):
-		node.load(save_game)
+		node.load(mSaveGame)
