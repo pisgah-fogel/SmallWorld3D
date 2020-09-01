@@ -13,8 +13,8 @@ var mState = State.ENTER
 export(int) var spawnDepth = -2
 export(int) var mDepth = 0
 
-export(int) var default_speed = 15
-export(int) var speed = 1
+export(int) var default_speed = 2
+export(int) var speed = 2
 
 # -23 < x < 18
 # -24 < z < -19
@@ -38,7 +38,6 @@ func _ready():
 		mItem.id = Item._id.ID_TURTLE
 	else:
 		mItem.id = Item._id.ID_FISH
-		print("Creating fish")
 	mItem.name = Item._name[mItem.id]
 	mItem.data["size"] = randi()%5+6
 	var mMesh = null
@@ -82,18 +81,14 @@ func calc_angle(a:Vector3, b:Vector3) -> float:
 func _on_FishView_body_entered(body):
 	
 	if mState == State.WANDER or mState == State.CHASING: # TODO: also on CHASING
-		print("Fish saw the player")
 		# TODO: Fix this angle
 		# TODO: smooth angle
 		self.rotation.y = calc_angle(body.translation, self.translation)
-		print(self.rotation.y, " should be around -1.57")
 		start_scared()
 
 var food = null
 func _on_PredatorView_body_entered(body):
-	print("Body entered predatorView")
 	if mState == State.WANDER:
-		print("Start chasing")
 		start_chasing()
 		food = body
 
@@ -113,9 +108,8 @@ func state_chasing(delta):
 		else:
 			# move to bait
 			self.look_at(baitLoc, Vector3(0, 1, 0))
-			translate(Vector3(0, 0, -delta*speed*0.05))
+			translate(Vector3(0, 0, -delta*speed))
 	else:
-		print("Bait disapeared, fish start wandering again")
 		start_wander()
 
 func _show_yourself():
@@ -125,6 +119,7 @@ func _show_yourself():
 #######################  ENTER   ##########################
 
 func start_enter():
+	speed = default_speed/2
 	mState = State.ENTER
 	mAnimationPlayer.get_animation("Static").loop = true
 	mAnimationPlayer.play("Static")
@@ -132,20 +127,20 @@ func start_enter():
 
 func state_enter(delta):
 	if translation.y < mDepth:
-		translation.y += delta*speed*0.2
+		translation.y += delta*speed
 	else:
 		start_wander()
 
 #######################  SCARED  ###########################
 func start_scared():
+	speed = default_speed
 	mState = State.SCARED
 	mAnimationPlayer.get_animation("Static").loop = true
 	mAnimationPlayer.play("Static")
 
 func state_scared(delta):
 	if translation.y > spawnDepth:
-		translation.y -= delta*speed*0.7
-		translate(Vector3(0, 0, -delta*speed))
+		translate(delta*speed*Vector3(0, -1, -1))
 	else:
 		queue_free()
 		print("Fish vanished into deep waters")
@@ -153,6 +148,7 @@ func state_scared(delta):
 #######################   WANDERING   ###############################
 
 func start_wander():
+	speed = default_speed/2
 	mAnimationPlayer.get_animation("Static").loop = true
 	mAnimationPlayer.play("Static")
 	destination = random_vec_in_zone()
