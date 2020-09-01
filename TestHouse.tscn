@@ -42,7 +42,7 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1.39575, 1.10404, 5.50546 )
 shape = SubResource( 2 )
 
 [node name="StaticChest" parent="." instance=ExtResource( 3 )]
-transform = Transform( 0.0988334, 0, -0.995104, 0, 1, 0, 0.995104, 0, 0.0988334, 1.83551, -0.679489, -8.4366 )
+transform = Transform( 2, 0, 0, 0, 2, 0, 0, 0, 2, -2.89689, 0.0976284, -5.24893 )
 unique_chest_id = 2
 
 [node name="StaticBody2" type="StaticBody" parent="."]

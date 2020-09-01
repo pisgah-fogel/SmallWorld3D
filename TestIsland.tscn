@@ -1,6 +1,7 @@
 [gd_scene load_steps=28 format=2]
 
 [ext_resource path="res://StaticShop.gd" type="Script" id=1]
+[ext_resource path="res://gfx/Bin.glb" type="PackedScene" id=2]
 [ext_resource path="res://StaticTestHouse.gd" type="Script" id=3]
 [ext_resource path="res://StaticBin.gd" type="Script" id=4]
 [ext_resource path="res://StaticChest.tscn" type="PackedScene" id=5]
@@ -34,8 +35,6 @@ extents = Vector3( 0.450746, 0.594694, 0.525791 )
 
 [sub_resource type="BoxShape" id=24]
 extents = Vector3( 0.355825, 0.53376, 0.412701 )
-
-[sub_resource type="CapsuleMesh" id=25]
 
 [sub_resource type="BoxShape" id=26]
 extents = Vector3( 0.415165, 0.334346, 0.406846 )
@@ -143,7 +142,7 @@ mesh = SubResource( 22 )
 material/0 = null
 
 [node name="StaticChest" parent="." instance=ExtResource( 5 )]
-transform = Transform( 0.0988334, 0, -0.995104, 0, 1, 0, 0.995104, 0, 0.0988334, 6.5272, -0.675488, -10.5905 )
+transform = Transform( 0.197667, 0, -1.99021, 0, 2, 0, 1.99021, 0, 0.197667, 6.5272, 0.283073, -7.21301 )
 num_column = 5
 
 [node name="StaticBin" type="StaticBody" parent="."]
@@ -163,10 +162,8 @@ collision_mask = 2147483648
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.013274, 1.72079, -5.62444 )
 shape = SubResource( 24 )
 
-[node name="MeshInstance" type="MeshInstance" parent="StaticBin"]
-transform = Transform( 0.404135, -0.0181976, -0.00195376, 0.00139799, 0.0800606, -0.456523, 0.0174327, 0.380154, 0.0651294, 0, 1.72775, -5.58771 )
-mesh = SubResource( 25 )
-material/0 = null
+[node name="Bin" parent="StaticBin" instance=ExtResource( 2 )]
+transform = Transform( 0.129232, 0, -0.48301, 0, 0.5, 0, 0.48301, 0, 0.129232, -0.00847387, 1.01399, -5.619 )
 
 [node name="StaticShop" type="StaticBody" parent="."]
 transform = Transform( 0.0988334, 0, -0.995104, 0, 1, 0, 0.995104, 0, 0.0988334, 3.87369, -0.740371, -6.9723 )
