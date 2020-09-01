@@ -121,9 +121,18 @@ func state_fishing(delta):
 	pass
 
 func event_fishing(event):
-	if event.is_action_pressed("ui_cancel") or event.is_action_pressed("ui_inventory"):
+	if event.is_action_pressed("ui_cancel") or event.is_action_pressed("ui_inventory") or event.is_action_pressed("ui_right")\
+		or event.is_action_pressed("ui_left") or event.is_action_pressed("ui_up") or event.is_action_pressed("ui_down"):
 		stop_fishing()
-	# TODO: pull bait back if ui_action and frighten or catch...
+	elif event.is_action_pressed("ui_action"):
+		if mBait:
+			# Move bait to the player
+			var dir = (get_global_transform().origin - mBait.get_global_transform().origin).normalized()
+			mBait.global_translate(dir*0.1)
+			if mBait.get_global_transform().origin.distance_to(get_global_transform().origin) < 1.5:
+				stop_fishing()
+		else:
+			mState = State.MOVE
 
 func stop_fishing():
 	if mBait:
@@ -156,6 +165,7 @@ func start_gotFish():
 func state_gotFish(delta):
 	# TODO move the fish to the character
 	if newFish != null:
+		#var fishGlobal = newFish.get_global_transform().origin
 		var fishGlobal = newFish.to_global(Vector3.ZERO)
 		var trans = Vector3.ZERO
 		if fishGlobal.y < translation.y + high_caught_fish:
@@ -166,8 +176,7 @@ func state_gotFish(delta):
 		newFish.global_translate(trans*delta*10.0)
 		if Vector2(fishGlobal.x, fishGlobal.z).distance_to(Vector2(translation.x, translation.z)) < 1:
 			stop_gotFish()
-			print("Fish ", fishGlobal.x, " ", fishGlobal.z)
-			print("Me ", translation.x, " ", translation.y)
+			
 	else:
 		stop_gotFish()
 

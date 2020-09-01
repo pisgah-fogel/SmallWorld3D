@@ -29,18 +29,18 @@ enabled = true
 [node name="Character" type="KinematicBody" parent="." groups=[
 "save",
 ]]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 7.083, -0.38525, 0 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 7.083, -0.00892106, 0 )
 collision_layer = 2
 script = ExtResource( 3 )
 
 [node name="Robot" parent="Character" instance=ExtResource( 2 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.969508, 0 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.0167343, 0 )
 
 [node name="CameraTarget" type="Spatial" parent="Character"]
-transform = Transform( 1, 0, 0, 0, 0.837089, 0.547067, 0, -0.547067, 0.837089, 0.85197, 7.44026, 9.56242 )
+transform = Transform( 1, 0, 0, 0, 0.837089, 0.547067, 0, -0.547067, 0.837089, 0.85197, 6.45402, 9.56242 )
 
 [node name="CollisionShape" type="CollisionShape" parent="Character"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00174427, 1.8988, 0.0912843 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00174427, 0.912558, 0.0912843 )
 shape = SubResource( 1 )
 
 [node name="Timer" type="Timer" parent="Character"]
