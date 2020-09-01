@@ -22,13 +22,18 @@ export(float) var timer_objectif = 1
 
 # -23 < x < 18
 # -24 < z < -19
-export(Rect2) var spawner_zone = Rect2(-23,-24,5,23+18)
+export(Rect2) var spawner_zone = Rect2(-23,-24,5,23+18) setget set_spawner
 
 var mAnimationPlayer = null
 onready var mTimer = $Timer
 
 var destination = Vector2.ZERO
 var current_orientation : float = 0
+
+func set_spawner(spawner):
+	spawner_zone = spawner
+	var a = random_vec_in_zone()
+	self.global_transform.origin = Vector3(a.x, spawnDepth, a.y)
 
 func random_vec_in_zone():
 	return Vector2(spawner_zone.position.x+spawner_zone.size.x*randf(), spawner_zone.position.y+spawner_zone.size.y*randf())

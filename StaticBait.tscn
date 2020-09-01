@@ -9,7 +9,7 @@ radius = 0.245584
 [sub_resource type="CapsuleMesh" id=2]
 
 [node name="StaticBait" type="StaticBody"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.335648, -0.0741369, -0.0483732 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0371733, -0.0263141, -0.0483732 )
 collision_layer = 32
 collision_mask = 2147483648
 script = ExtResource( 1 )

@@ -9,7 +9,6 @@ radius = 3.26629
 radius = 1.42395
 
 [node name="SpatialFish" type="Spatial"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -21.8052, -2.02166, 4.29659 )
 script = ExtResource( 1 )
 mDepth = -1
 
