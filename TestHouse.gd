@@ -13,13 +13,15 @@ func _ready():
 
 func _on_TeleportBack_body_entered(body):
 	print("Teleport out of the house")
-	# Remove the current level
-	self.queue_free()
-	# Add the next level
-	var next_level_resource = load("res://TestIsland.tscn")
-	var next_level = next_level_resource.instance()
-	mRoot.add_child(next_level)
+	var level = get_tree().get_root().get_node("TestScene")
+	level.loadScene("res://TestIsland.tscn")
 
 	mCharacter.translation = oldCharacterPosition + mCharacter.translation
 	# TODO: use a splash screen to hide the teleportation
 	
+func save(save_game: Resource):
+	save_game.data["testhouse_1_charpos"] = oldCharacterPosition
+
+func load(save_game: Resource):
+	if "testhouse_1_charpos" in save_game.data:
+		oldCharacterPosition = save_game.data["testhouse_1_charpos"]

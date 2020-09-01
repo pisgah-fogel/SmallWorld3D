@@ -59,7 +59,7 @@ extents = Vector3( 5.52623, 3.19649, 4.40391 )
 
 [sub_resource type="BoxShape" id=15]
 
-[node name="TestIsland" type="Spatial"]
+[node name="Scene" type="Spatial"]
 
 [node name="OmniLight" type="OmniLight" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -4.87394, 3.63377, 0 )

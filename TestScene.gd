@@ -1,8 +1,10 @@
 extends Spatial
 
 onready var mGameSaver = $GameSaver
+export var default_scene = "res://TestIsland.tscn"
 
 var firstRun = true
+var mScene = null
 
 func _ready():
 	mGameSaver.load(0)
@@ -22,7 +24,49 @@ func show_start_up_dialog():
 
 func save(save_game: Resource):
 	save_game.data["TestScene_firstrun"] = self.firstRun
+	if mScene:
+		print("Scene: ", mScene)
+		print("have filename: ", mScene.filename)
+		save_game.data["Scene"] = mScene.filename
+	else:
+		print("Error: Cannot find saving default one")
+		save_game.data["Scene"] = default_scene
 
 func load(save_game: Resource):
 	if "TestScene_firstrun" in save_game.data:
 		self.firstRun = save_game.data["TestScene_firstrun"]
+
+	if "Scene" in save_game.data:
+		print("Loading ", save_game.data["Scene"])
+		loadScene(save_game.data["Scene"])
+	else:
+		loadOnlyDefaultScene()
+
+func freeScene():
+	if mScene:
+		mGameSaver.appendToSave(mScene)
+		mScene.queue_free()
+		mScene= null
+
+func loadScene(strpath):
+	freeScene()
+	var error = false
+	var obj = load(strpath)
+	if not obj:
+		print("Cannot load path: ", strpath)
+		error = true
+	else:
+		mScene = obj.instance()
+		if not mScene:
+			error = true
+		else:
+			add_child(mScene)
+			mGameSaver.restoreDatas(mScene)
+	if error:
+		print("Error occured, loading default scene")
+		loadOnlyDefaultScene()
+
+func loadOnlyDefaultScene():
+	mScene = load(default_scene).instance()
+	add_child(mScene)
+	mGameSaver.restoreDatas(mScene)

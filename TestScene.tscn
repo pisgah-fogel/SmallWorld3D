@@ -1,6 +1,5 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=6 format=2]
 
-[ext_resource path="res://TestIsland.tscn" type="PackedScene" id=1]
 [ext_resource path="res://gfx/Robot.glb" type="PackedScene" id=2]
 [ext_resource path="res://Character.gd" type="Script" id=3]
 [ext_resource path="res://save/GameSaver.tscn" type="PackedScene" id=8]
@@ -44,6 +43,4 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00174427, 1.8988, 0.0912843 
 shape = SubResource( 1 )
 
 [node name="Timer" type="Timer" parent="Character"]
-
-[node name="TestIsland" parent="." instance=ExtResource( 1 )]
 [connection signal="timeout" from="Character/Timer" to="Character" method="_on_Timer_timeout"]

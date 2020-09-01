@@ -8,6 +8,33 @@ var SAVE_FOLDER: String = "user://save"
 var SAVE_NAME_TEMPLATE: String = "save_%03d.tres"
 var mSaveGame = null
 
+func loopSaveNodes(node):
+    for N in node.get_children():
+        if N.get_child_count() > 0:
+            loopSaveNodes(N)
+        if N.is_in_group("save"):
+            N.save(mSaveGame)
+            print("save ["+N.get_name()+"]")
+func loopLoadNodes(node):
+    for N in node.get_children():
+        if N.get_child_count() > 0:
+            loopLoadNodes(N)
+        if N.is_in_group("save"):
+            N.load(mSaveGame)
+            print("load ["+N.get_name()+"]")
+
+func appendToSave(parent_node):
+	if mSaveGame == null:
+		mSaveGame = SaveGame.new()
+		print("appendToSave(): No game save: let's create one")
+	loopSaveNodes(parent_node)
+
+func restoreDatas(parent_node):
+	if mSaveGame == null:
+		print("restoreDatas(): Error, cannot restore datas")
+		return
+	loopLoadNodes(parent_node)
+
 func save(id: int):
 	# Passes a SaveGame resource to all nodes to save data from
 	# and writes it to the disk
@@ -17,9 +44,6 @@ func save(id: int):
 	mSaveGame.game_version = ProjectSettings.get_setting("application/config/version")
 	for node in get_tree().get_nodes_in_group('save'):
 		node.save(mSaveGame)
-		
-	for item in mSaveGame.data:
-		print("Saving ", item)
 
 	var directory: Directory = Directory.new()
 	if not directory.dir_exists(SAVE_FOLDER):
@@ -41,9 +65,6 @@ func load(id: int):
 		return
 	
 	mSaveGame = load(save_file_path)
-		
-	for item in mSaveGame.data:
-		print("Get ", item, " back")
 
 	for node in get_tree().get_nodes_in_group('save'):
 		node.load(mSaveGame)

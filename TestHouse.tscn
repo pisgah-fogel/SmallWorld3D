@@ -9,7 +9,9 @@ extents = Vector3( 12.6743, 0.533366, 10.7391 )
 [sub_resource type="BoxShape" id=2]
 extents = Vector3( 1, 1.93297, 1 )
 
-[node name="TestHouse" type="Spatial"]
+[node name="Scene" type="Spatial" groups=[
+"save",
+]]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0337918, 0.00718546, 0.0882404 )
 script = ExtResource( 1 )
 
