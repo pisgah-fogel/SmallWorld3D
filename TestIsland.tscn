@@ -144,6 +144,7 @@ material/0 = null
 
 [node name="StaticChest" parent="." instance=ExtResource( 5 )]
 transform = Transform( 0.0988334, 0, -0.995104, 0, 1, 0, 0.995104, 0, 0.0988334, 6.5272, -0.675488, -10.5905 )
+num_column = 5
 
 [node name="StaticBin" type="StaticBody" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.564449, -1.6172 )
@@ -171,6 +172,8 @@ material/0 = null
 transform = Transform( 0.0988334, 0, -0.995104, 0, 1, 0, 0.995104, 0, 0.0988334, 3.87369, -0.740371, -6.9723 )
 collision_mask = 0
 script = ExtResource( 1 )
+num_column = 5
+num_row = 2
 
 [node name="CollisionShape" type="CollisionShape" parent="StaticShop"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0146537, 1.70022, 0.24458 )
