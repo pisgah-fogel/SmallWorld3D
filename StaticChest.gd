@@ -49,4 +49,5 @@ func save(save_game: Resource):
 	save_game.data["chest_"+str(unique_chest_id)+"_objects"] = mObjects # TODO: generate for each chest
 
 func load(save_game: Resource):
-	mObjects = save_game.data["chest_"+str(unique_chest_id)+"_objects"]
+	if "chest_"+str(unique_chest_id)+"_objects" in save_game.data:
+		mObjects = save_game.data["chest_"+str(unique_chest_id)+"_objects"]

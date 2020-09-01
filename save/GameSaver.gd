@@ -27,12 +27,16 @@ func appendToSave(parent_node):
 	if mSaveGame == null:
 		mSaveGame = SaveGame.new()
 		print("appendToSave(): No game save: let's create one")
+	if parent_node.is_in_group("save"):
+		parent_node.save(mSaveGame)
 	loopSaveNodes(parent_node)
 
 func restoreDatas(parent_node):
 	if mSaveGame == null:
 		print("restoreDatas(): Error, cannot restore datas")
 		return
+	if parent_node.is_in_group("save"):
+		parent_node.load(mSaveGame)
 	loopLoadNodes(parent_node)
 
 func save(id: int):

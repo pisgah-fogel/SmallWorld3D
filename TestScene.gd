@@ -38,9 +38,9 @@ func load(save_game: Resource):
 
 	if "Scene" in save_game.data:
 		print("Loading ", save_game.data["Scene"])
-		loadScene(save_game.data["Scene"])
+		loadScene(save_game.data["Scene"], false)
 	else:
-		loadOnlyDefaultScene()
+		loadOnlyDefaultScene(false)
 
 func freeScene():
 	if mScene:
@@ -48,7 +48,7 @@ func freeScene():
 		mScene.queue_free()
 		mScene= null
 
-func loadScene(strpath):
+func loadScene(strpath, dyn = true):
 	freeScene()
 	var error = false
 	var obj = load(strpath)
@@ -62,11 +62,15 @@ func loadScene(strpath):
 		else:
 			add_child(mScene)
 			mGameSaver.restoreDatas(mScene)
+			if dyn and mScene.has_method("_dynamic_scene_load"):
+				mScene._dynamic_scene_load()
 	if error:
 		print("Error occured, loading default scene")
-		loadOnlyDefaultScene()
+		loadOnlyDefaultScene(dyn)
 
-func loadOnlyDefaultScene():
+func loadOnlyDefaultScene(dyn = true):
 	mScene = load(default_scene).instance()
 	add_child(mScene)
 	mGameSaver.restoreDatas(mScene)
+	if dyn and mScene.has_method("_dynamic_scene_load"):
+		mScene._dynamic_scene_load()
