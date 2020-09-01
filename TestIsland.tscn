@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=2]
+[gd_scene load_steps=30 format=2]
 
 [ext_resource path="res://StaticShop.gd" type="Script" id=1]
 [ext_resource path="res://SpatialFish.gd" type="Script" id=2]
@@ -8,61 +8,110 @@
 [ext_resource path="res://Water.shader" type="Shader" id=6]
 [ext_resource path="res://gfx/Tree.glb" type="PackedScene" id=7]
 [ext_resource path="res://gfx/TestHouseExt.glb" type="PackedScene" id=8]
+[ext_resource path="res://gfx_src/lowpoly_gradient.png" type="Texture" id=9]
 [ext_resource path="res://gfx/Dirt.glb" type="PackedScene" id=10]
 
-[sub_resource type="BoxShape" id=1]
+[sub_resource type="BoxShape" id=19]
 extents = Vector3( 26.7895, 1.01953, 23 )
 
-[sub_resource type="BoxShape" id=2]
+[sub_resource type="BoxShape" id=20]
 extents = Vector3( 6.85282, 8.18815, 4.06406 )
 
-[sub_resource type="ShaderMaterial" id=3]
+[sub_resource type="ShaderMaterial" id=21]
 shader = ExtResource( 6 )
 shader_param/out_color = Color( 0, 0.2, 1, 1 )
 shader_param/amount = 0.2
 shader_param/beer_factor = 1.073
 
-[sub_resource type="PlaneMesh" id=4]
-material = SubResource( 3 )
+[sub_resource type="PlaneMesh" id=22]
+material = SubResource( 21 )
 size = Vector2( 7, 45 )
 subdivide_width = 3
 subdivide_depth = 3
 
-[sub_resource type="BoxShape" id=5]
+[sub_resource type="BoxShape" id=23]
 extents = Vector3( 0.450746, 0.594694, 0.525791 )
 
-[sub_resource type="BoxShape" id=6]
+[sub_resource type="BoxShape" id=24]
 extents = Vector3( 0.355825, 0.53376, 0.412701 )
 
-[sub_resource type="CapsuleMesh" id=7]
+[sub_resource type="CapsuleMesh" id=25]
 
-[sub_resource type="BoxShape" id=8]
+[sub_resource type="BoxShape" id=26]
 extents = Vector3( 0.415165, 0.334346, 0.406846 )
 
-[sub_resource type="BoxShape" id=9]
+[sub_resource type="BoxShape" id=27]
 extents = Vector3( 0.264449, 0.230816, 0.316052 )
 
-[sub_resource type="CapsuleMesh" id=10]
+[sub_resource type="CapsuleMesh" id=28]
 
-[sub_resource type="SphereShape" id=11]
+[sub_resource type="SphereShape" id=29]
 radius = 3.26629
 
-[sub_resource type="SphereShape" id=12]
+[sub_resource type="SphereShape" id=30]
 radius = 1.42395
 
-[sub_resource type="BoxShape" id=13]
+[sub_resource type="BoxShape" id=31]
 extents = Vector3( 0.637293, 1, 0.715345 )
 
-[sub_resource type="BoxShape" id=14]
-extents = Vector3( 5.52623, 3.19649, 4.40391 )
+[sub_resource type="BoxShape" id=32]
+extents = Vector3( 5.52623, 3.07206, 3.83042 )
 
-[sub_resource type="BoxShape" id=15]
+[sub_resource type="VisualShaderNodeTexture" id=16]
+texture = ExtResource( 9 )
+
+[sub_resource type="VisualShaderNodeScalarConstant" id=17]
+constant = 1.0
+
+[sub_resource type="VisualShader" id=18]
+code = "shader_type spatial;
+uniform sampler2D tex_frg_2;
+
+
+
+void vertex() {
+// Output:0
+
+}
+
+void fragment() {
+// Texture:2
+	vec4 tex_frg_2_read = texture(tex_frg_2, UV.xy);
+	vec3 n_out2p0 = tex_frg_2_read.rgb;
+	float n_out2p1 = tex_frg_2_read.a;
+
+// Scalar:3
+	float n_out3p0 = 1.000000;
+
+// Output:0
+	ALBEDO = n_out2p0;
+	ROUGHNESS = n_out3p0;
+
+}
+
+void light() {
+// Output:0
+
+}
+"
+graph_offset = Vector2( 0, 450 )
+nodes/fragment/2/node = SubResource( 16 )
+nodes/fragment/2/position = Vector2( 60, 160 )
+nodes/fragment/3/node = SubResource( 17 )
+nodes/fragment/3/position = Vector2( 60, 400 )
+nodes/fragment/connections = PoolIntArray( 3, 0, 0, 3, 2, 0, 0, 0 )
+
+[sub_resource type="ShaderMaterial" id=33]
+shader = SubResource( 18 )
+
+[sub_resource type="BoxShape" id=34]
+extents = Vector3( 0.384203, 1, 0.711839 )
 
 [node name="Scene" type="Spatial"]
 
 [node name="OmniLight" type="OmniLight" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -4.87394, 3.63377, 0 )
-light_color = Color( 0.862745, 0.662745, 0.376471, 1 )
+transform = Transform( 0.991264, 0, 0.131893, 0, 1, 0, -0.131893, 0, 0.991264, 7.29403, 7.19363, -3.42037 )
+light_color = Color( 0.933333, 0.721569, 0.415686, 1 )
 shadow_enabled = true
 omni_range = 50.0
 
@@ -74,7 +123,7 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 4.10096, -1.33088, -3.03452 )
 
 [node name="CollisionShape" type="CollisionShape" parent="BeginnerIsland"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.00074482, -0.564212, -2.67763 )
-shape = SubResource( 1 )
+shape = SubResource( 19 )
 
 [node name="StaticBody" type="StaticBody" parent="BeginnerIsland"]
 collision_mask = 0
@@ -89,14 +138,14 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -16.159 )
 
 [node name="CollisionShape" type="CollisionShape" parent="BeginnerIsland/StaticBody2"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 2.60642, 0, 2.19419 )
-shape = SubResource( 2 )
+shape = SubResource( 20 )
 
 [node name="StaticSea" type="Spatial" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -2.53338, 0, 0 )
 
 [node name="Sea" type="MeshInstance" parent="StaticSea"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -18.9203, -0.151991, -2.21221 )
-mesh = SubResource( 4 )
+mesh = SubResource( 22 )
 material/0 = null
 
 [node name="StaticChest" parent="." instance=ExtResource( 5 )]
@@ -109,7 +158,7 @@ script = ExtResource( 4 )
 
 [node name="CollisionShape" type="CollisionShape" parent="StaticBin"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.78019, -5.57876 )
-shape = SubResource( 5 )
+shape = SubResource( 23 )
 
 [node name="Area" type="Area" parent="StaticBin"]
 collision_layer = 16
@@ -117,11 +166,11 @@ collision_mask = 2147483648
 
 [node name="CollisionShape" type="CollisionShape" parent="StaticBin/Area"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.013274, 1.72079, -5.62444 )
-shape = SubResource( 6 )
+shape = SubResource( 24 )
 
 [node name="MeshInstance" type="MeshInstance" parent="StaticBin"]
 transform = Transform( 0.404135, -0.0181976, -0.00195376, 0.00139799, 0.0800606, -0.456523, 0.0174327, 0.380154, 0.0651294, 0, 1.72775, -5.58771 )
-mesh = SubResource( 7 )
+mesh = SubResource( 25 )
 material/0 = null
 
 [node name="StaticShop" type="StaticBody" parent="."]
@@ -131,7 +180,7 @@ script = ExtResource( 1 )
 
 [node name="CollisionShape" type="CollisionShape" parent="StaticShop"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0146537, 1.70022, 0.24458 )
-shape = SubResource( 8 )
+shape = SubResource( 26 )
 
 [node name="Area" type="Area" parent="StaticShop"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -2.88247, 0.446999, 0.589488 )
@@ -140,11 +189,11 @@ collision_mask = 2147483648
 
 [node name="CollisionShape" type="CollisionShape" parent="StaticShop/Area"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 2.86033, 1.3237, -0.35132 )
-shape = SubResource( 9 )
+shape = SubResource( 27 )
 
 [node name="MeshInstance" type="MeshInstance" parent="StaticShop"]
 transform = Transform( -4.84288e-08, 0.3, -4.88762e-08, 0, -4.88762e-08, -0.3, -0.3, -4.84288e-08, 7.99361e-15, -0.0236859, 1.63673, 0.238489 )
-mesh = SubResource( 10 )
+mesh = SubResource( 28 )
 material/0 = null
 
 [node name="SpatialFish" type="Spatial" parent="."]
@@ -158,7 +207,7 @@ collision_mask = 2
 
 [node name="CollisionShape" type="CollisionShape" parent="SpatialFish/FishView"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00893784, 0, -0.598196 )
-shape = SubResource( 11 )
+shape = SubResource( 29 )
 
 [node name="PredatorView" type="Area" parent="SpatialFish"]
 collision_layer = 0
@@ -166,7 +215,7 @@ collision_mask = 2147483680
 
 [node name="CollisionShape" type="CollisionShape" parent="SpatialFish/PredatorView"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0199871, 0, -0.898473 )
-shape = SubResource( 12 )
+shape = SubResource( 30 )
 
 [node name="Timer" type="Timer" parent="SpatialFish"]
 
@@ -182,7 +231,18 @@ transform = Transform( 0.4983, 0.041174, 0.00132775, -0.0411954, 0.498041, 0.016
 
 [node name="CollisionShape" type="CollisionShape" parent="Foret/StaticTree"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.127482, 1.39501, -0.157966 )
-shape = SubResource( 13 )
+shape = SubResource( 31 )
+
+[node name="StaticTree8" type="StaticBody" parent="Foret"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 34.2132, -0.348624, -23.8033 )
+collision_mask = 0
+
+[node name="Tree" parent="Foret/StaticTree8" instance=ExtResource( 7 )]
+transform = Transform( 0.4983, 0.041174, 0.00132775, -0.0411954, 0.498041, 0.0160605, -2.79397e-09, -0.0161153, 0.49974, -3.64926, 0.188092, -0.108169 )
+
+[node name="CollisionShape" type="CollisionShape" parent="Foret/StaticTree8"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.127482, 1.39501, -0.157966 )
+shape = SubResource( 31 )
 
 [node name="StaticTree2" type="StaticBody" parent="Foret"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 20.5621, -0.348624, -17.5629 )
@@ -193,7 +253,7 @@ transform = Transform( 0.4983, 0.041174, 0.00132775, -0.0411954, 0.498041, 0.016
 
 [node name="CollisionShape" type="CollisionShape" parent="Foret/StaticTree2"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.127482, 1.39501, -0.157966 )
-shape = SubResource( 13 )
+shape = SubResource( 31 )
 
 [node name="StaticTree3" type="StaticBody" parent="Foret"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 17.2398, -0.348624, -16.6205 )
@@ -204,7 +264,7 @@ transform = Transform( 0.4983, 0.041174, 0.00132775, -0.0411954, 0.498041, 0.016
 
 [node name="CollisionShape" type="CollisionShape" parent="Foret/StaticTree3"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.127482, 1.39501, -0.157966 )
-shape = SubResource( 13 )
+shape = SubResource( 31 )
 
 [node name="StaticTree4" type="StaticBody" parent="Foret"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 20.0924, -0.348624, -14.2853 )
@@ -215,7 +275,7 @@ transform = Transform( 0.4983, 0.041174, 0.00132775, -0.0411954, 0.498041, 0.016
 
 [node name="CollisionShape" type="CollisionShape" parent="Foret/StaticTree4"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.127482, 1.39501, -0.157966 )
-shape = SubResource( 13 )
+shape = SubResource( 31 )
 
 [node name="StaticTree5" type="StaticBody" parent="Foret"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 15.0201, -0.348624, -15.8936 )
@@ -226,7 +286,7 @@ transform = Transform( 0.4983, 0.041174, 0.00132775, -0.0411954, 0.498041, 0.016
 
 [node name="CollisionShape" type="CollisionShape" parent="Foret/StaticTree5"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.127482, 1.39501, -0.157966 )
-shape = SubResource( 13 )
+shape = SubResource( 31 )
 
 [node name="StaticTree6" type="StaticBody" parent="Foret"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 15.0201, -0.348624, -21.6749 )
@@ -237,7 +297,7 @@ transform = Transform( 0.4983, 0.041174, 0.00132775, -0.0411954, 0.498041, 0.016
 
 [node name="CollisionShape" type="CollisionShape" parent="Foret/StaticTree6"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.127482, 1.39501, -0.157966 )
-shape = SubResource( 13 )
+shape = SubResource( 31 )
 
 [node name="StaticTree7" type="StaticBody" parent="Foret"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 11.7108, -0.348624, -20.5774 )
@@ -248,7 +308,7 @@ transform = Transform( 0.4983, 0.041174, 0.00132775, -0.0411954, 0.498041, 0.016
 
 [node name="CollisionShape" type="CollisionShape" parent="Foret/StaticTree7"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.127482, 1.39501, -0.157966 )
-shape = SubResource( 13 )
+shape = SubResource( 31 )
 
 [node name="StaticTestHouse" type="StaticBody" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 17.6475, 1.08701, -14.544 )
@@ -257,20 +317,34 @@ script = ExtResource( 3 )
 
 [node name="CollisionShape" type="CollisionShape" parent="StaticTestHouse"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.287697, 1.92442, 1.06604 )
-shape = SubResource( 14 )
+shape = SubResource( 32 )
 
 [node name="TestHouseExt" parent="StaticTestHouse" instance=ExtResource( 8 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.785883, 0 )
+
+[node name="Exterieur" parent="StaticTestHouse/TestHouseExt" index="0"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 2.02378, -0.748638, 0.498786 )
+material/0 = SubResource( 33 )
 
 [node name="Area" type="Area" parent="StaticTestHouse"]
 collision_layer = 0
 collision_mask = 2
 
 [node name="CollisionShape" type="CollisionShape" parent="StaticTestHouse/Area"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1.37913, 0, 4.89461 )
-shape = SubResource( 15 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1.18329, 0, 4.45119 )
+shape = SubResource( 34 )
+
+[node name="OmniLight2" type="OmniLight" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 17.7819, 2.49433, -9.50817 )
+omni_range = 2.66541
+
+[node name="OmniLight3" type="OmniLight" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 20.123, 2.49433, -9.50817 )
+omni_range = 2.66541
 [connection signal="body_entered" from="StaticBin/Area" to="StaticBin" method="_on_Area_body_entered"]
 [connection signal="body_entered" from="StaticShop/Area" to="StaticShop" method="_on_Area_body_entered"]
 [connection signal="body_entered" from="SpatialFish/FishView" to="SpatialFish" method="_on_FishView_body_entered"]
 [connection signal="body_entered" from="SpatialFish/PredatorView" to="SpatialFish" method="_on_PredatorView_body_entered"]
 [connection signal="body_entered" from="StaticTestHouse/Area" to="StaticTestHouse" method="_on_Area_body_entered"]
+
+[editable path="StaticTestHouse/TestHouseExt"]

@@ -27,10 +27,10 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.722579, -0.473403, 0 )
 shape = SubResource( 1 )
 
 [node name="OmniLight" type="OmniLight" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -1.37998, 7.53745, -5.16723 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.471985, 2.35706, -5.16723 )
 light_color = Color( 0.886275, 0.831373, 0.247059, 1 )
 light_energy = 0.66
-omni_range = 50.0
+omni_range = 6.6
 
 [node name="TeleportBack" type="Area" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -1.37998, 0, -2.77094 )
@@ -44,4 +44,11 @@ shape = SubResource( 2 )
 [node name="StaticChest" parent="." instance=ExtResource( 3 )]
 transform = Transform( 0.0988334, 0, -0.995104, 0, 1, 0, 0.995104, 0, 0.0988334, 1.83551, -0.679489, -8.4366 )
 unique_chest_id = 2
+
+[node name="StaticBody2" type="StaticBody" parent="."]
+
+[node name="CollisionPolygon" type="CollisionPolygon" parent="StaticBody2"]
+transform = Transform( 1, 0, 0, 0, -1.62921e-07, -1, 0, 1, -1.62921e-07, 1.63723, 0, -18.5433 )
+depth = 10.0
+polygon = PoolVector2Array( -15.5577, 11.7891, -2.84261, 26.6826, 2.48057, 19.4015, -0.371514, 19.5571, -0.503996, 22.3772, -2.46468, 22.3445, -2.8895, 19.5669, -7.43175, 19.4035, -7.72586, 16.6585, -5.63446, 16.3318, -5.53642, 11.7241, 2.44792, 11.6557, 2.50806, 19.1746, 6.49362, 19.2136, 6.98266, 9.38836 )
 [connection signal="body_entered" from="TeleportBack" to="." method="_on_TeleportBack_body_entered"]
