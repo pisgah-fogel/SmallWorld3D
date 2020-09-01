@@ -8,6 +8,7 @@ var mState = State.CLOSED
 export var mObjects = []
 export var num_column = 3
 export var num_row = 1
+export var unique_chest_id = 1
 
 var tileStart = Vector2(2, 1)
 
@@ -45,7 +46,7 @@ func setItem(index:int, object):
 ##################### SAVING RESOURCES ########################
 
 func save(save_game: Resource):
-	save_game.data["chest_1_objects"] = mObjects # TODO: generate for each chest
+	save_game.data["chest_"+str(unique_chest_id)+"_objects"] = mObjects # TODO: generate for each chest
 
 func load(save_game: Resource):
-	mObjects = save_game.data["chest_1_objects"]
+	mObjects = save_game.data["chest_"+str(unique_chest_id)+"_objects"]
