@@ -29,17 +29,14 @@ var current_orientation : float = 0
 func random_vec_in_zone():
 	return Vector2(spawner_zone.position.x+spawner_zone.size.x*randf(), spawner_zone.position.y+spawner_zone.size.y*randf())
 
-const Item = preload("res://Item.gd")
 var mItem = null
 func _ready():
 	self.rotation.y = randf()
-	mItem = Item.new()
-	if randi()%100 > 90:
-		mItem.id = Item._id.ID_TURTLE
-	else:
-		mItem.id = Item._id.ID_FISH
-	mItem.name = Item._name[mItem.id]
-	mItem.data["size"] = randi()%5+6
+	print("Fish spawned")
+
+func setFishType(item):
+	print("Fish set FishType")
+	mItem = item
 	var mMesh = null
 	match mItem.id:
 		Item._id.ID_FISH:
@@ -52,10 +49,9 @@ func _ready():
 		add_child(mMesh)
 		mAnimationPlayer = mMesh.get_node("AnimationPlayer")
 		mMesh.rotation = Vector3(0, 3.14/2, 0)
+		start_enter()
 	else:
 		print("Error can't load Fish's mesh")
-	
-	start_enter()
 
 func _process(delta):
 	if delta > 1:
@@ -79,7 +75,6 @@ func calc_angle(a:Vector3, b:Vector3) -> float:
 	return atan2(b.z - a.z, b.x - a.x)
 
 func _on_FishView_body_entered(body):
-	
 	if mState == State.WANDER or mState == State.CHASING: # TODO: also on CHASING
 		# TODO: Fix this angle
 		# TODO: smooth angle

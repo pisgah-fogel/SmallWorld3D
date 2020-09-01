@@ -1,0 +1,34 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://SpatialFish.gd" type="Script" id=1]
+
+[sub_resource type="SphereShape" id=29]
+radius = 3.26629
+
+[sub_resource type="SphereShape" id=30]
+radius = 1.42395
+
+[node name="SpatialFish" type="Spatial"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -21.8052, -2.02166, 4.29659 )
+script = ExtResource( 1 )
+mDepth = -1
+
+[node name="FishView" type="Area" parent="."]
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape" type="CollisionShape" parent="FishView"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00893784, 0, -0.598196 )
+shape = SubResource( 29 )
+
+[node name="PredatorView" type="Area" parent="."]
+collision_layer = 0
+collision_mask = 2147483680
+
+[node name="CollisionShape" type="CollisionShape" parent="PredatorView"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0199871, 0, -0.898473 )
+shape = SubResource( 30 )
+
+[node name="Timer" type="Timer" parent="."]
+[connection signal="body_entered" from="FishView" to="." method="_on_FishView_body_entered"]
+[connection signal="body_entered" from="PredatorView" to="." method="_on_PredatorView_body_entered"]

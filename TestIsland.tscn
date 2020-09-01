@@ -1,7 +1,6 @@
-[gd_scene load_steps=30 format=2]
+[gd_scene load_steps=28 format=2]
 
 [ext_resource path="res://StaticShop.gd" type="Script" id=1]
-[ext_resource path="res://SpatialFish.gd" type="Script" id=2]
 [ext_resource path="res://StaticTestHouse.gd" type="Script" id=3]
 [ext_resource path="res://StaticBin.gd" type="Script" id=4]
 [ext_resource path="res://StaticChest.tscn" type="PackedScene" id=5]
@@ -10,6 +9,7 @@
 [ext_resource path="res://gfx/TestHouseExt.glb" type="PackedScene" id=8]
 [ext_resource path="res://gfx_src/lowpoly_gradient.png" type="Texture" id=9]
 [ext_resource path="res://gfx/Dirt.glb" type="PackedScene" id=10]
+[ext_resource path="res://FishSpawner.gd" type="Script" id=11]
 
 [sub_resource type="BoxShape" id=19]
 extents = Vector3( 26.7895, 1.01953, 23 )
@@ -44,12 +44,6 @@ extents = Vector3( 0.415165, 0.334346, 0.406846 )
 extents = Vector3( 0.264449, 0.230816, 0.316052 )
 
 [sub_resource type="CapsuleMesh" id=28]
-
-[sub_resource type="SphereShape" id=29]
-radius = 3.26629
-
-[sub_resource type="SphereShape" id=30]
-radius = 1.42395
 
 [sub_resource type="BoxShape" id=31]
 extents = Vector3( 0.637293, 1, 0.715345 )
@@ -196,29 +190,6 @@ transform = Transform( -4.84288e-08, 0.3, -4.88762e-08, 0, -4.88762e-08, -0.3, -
 mesh = SubResource( 28 )
 material/0 = null
 
-[node name="SpatialFish" type="Spatial" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -21.8052, -2.02166, 4.29659 )
-script = ExtResource( 2 )
-mDepth = -1
-
-[node name="FishView" type="Area" parent="SpatialFish"]
-collision_layer = 0
-collision_mask = 2
-
-[node name="CollisionShape" type="CollisionShape" parent="SpatialFish/FishView"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00893784, 0, -0.598196 )
-shape = SubResource( 29 )
-
-[node name="PredatorView" type="Area" parent="SpatialFish"]
-collision_layer = 0
-collision_mask = 2147483680
-
-[node name="CollisionShape" type="CollisionShape" parent="SpatialFish/PredatorView"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0199871, 0, -0.898473 )
-shape = SubResource( 30 )
-
-[node name="Timer" type="Timer" parent="SpatialFish"]
-
 [node name="Foret" type="Spatial" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -23.2782, -0.333684, 14.0576 )
 
@@ -341,10 +312,20 @@ omni_range = 2.66541
 [node name="OmniLight3" type="OmniLight" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 20.123, 2.49433, -9.50817 )
 omni_range = 2.66541
+
+[node name="FishSpawner" type="Spatial" parent="."]
+script = ExtResource( 11 )
+
+[node name="Point1" type="Spatial" parent="FishSpawner"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -24.9851, 0, -23.9464 )
+
+[node name="Point2" type="Spatial" parent="FishSpawner"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -18.3327, 0, 19.2023 )
+
+[node name="Timer" type="Timer" parent="FishSpawner"]
 [connection signal="body_entered" from="StaticBin/Area" to="StaticBin" method="_on_Area_body_entered"]
 [connection signal="body_entered" from="StaticShop/Area" to="StaticShop" method="_on_Area_body_entered"]
-[connection signal="body_entered" from="SpatialFish/FishView" to="SpatialFish" method="_on_FishView_body_entered"]
-[connection signal="body_entered" from="SpatialFish/PredatorView" to="SpatialFish" method="_on_PredatorView_body_entered"]
 [connection signal="body_entered" from="StaticTestHouse/Area" to="StaticTestHouse" method="_on_Area_body_entered"]
+[connection signal="timeout" from="FishSpawner/Timer" to="FishSpawner" method="_on_Timer_timeout"]
 
 [editable path="StaticTestHouse/TestHouseExt"]
