@@ -1,0 +1,37 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://StaticShop.gd" type="Script" id=1]
+
+[sub_resource type="BoxShape" id=7]
+extents = Vector3( 0.415165, 0.334346, 0.406846 )
+
+[sub_resource type="BoxShape" id=8]
+extents = Vector3( 0.264449, 0.230816, 0.316052 )
+
+[sub_resource type="CapsuleMesh" id=9]
+
+[node name="StaticShop" type="StaticBody"]
+transform = Transform( 0.0988334, 0, -0.995104, 0, 1, 0, 0.995104, 0, 0.0988334, 3.87369, -0.740371, -6.9723 )
+collision_mask = 0
+script = ExtResource( 1 )
+num_column = 5
+num_row = 2
+
+[node name="CollisionShape" type="CollisionShape" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0146537, 1.70022, 0.24458 )
+shape = SubResource( 7 )
+
+[node name="Area" type="Area" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -2.88247, 0.446999, 0.589488 )
+collision_layer = 16
+collision_mask = 2147483648
+
+[node name="CollisionShape" type="CollisionShape" parent="Area"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 2.86033, 1.3237, -0.35132 )
+shape = SubResource( 8 )
+
+[node name="MeshInstance" type="MeshInstance" parent="."]
+transform = Transform( -4.84288e-08, 0.3, -4.88762e-08, 0, -4.88762e-08, -0.3, -0.3, -4.84288e-08, 7.99361e-15, -0.0236859, 1.63673, 0.238489 )
+mesh = SubResource( 9 )
+material/0 = null
+[connection signal="body_entered" from="Area" to="." method="_on_Area_body_entered"]

@@ -8,7 +8,7 @@
 [sub_resource type="ShaderMaterial" id=1]
 
 [sub_resource type="BoxShape" id=2]
-extents = Vector3( 0.795434, 0.892338, 0.828109 )
+extents = Vector3( 0.406152, 0.838105, 0.292586 )
 
 [node name="TestScene" type="Spatial" groups=[
 "save",
@@ -54,7 +54,7 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.0167343, 0 )
 transform = Transform( 1, 0, 0, 0, 0.837089, 0.547067, 0, -0.547067, 0.837089, 0.85197, 6.45402, 9.56242 )
 
 [node name="CollisionShape" type="CollisionShape" parent="Character"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00174427, 0.912558, 0.0912843 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0074234, 0.858021, 0.0912843 )
 shape = SubResource( 2 )
 
 [node name="Timer" type="Timer" parent="Character"]
