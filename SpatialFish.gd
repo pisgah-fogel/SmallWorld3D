@@ -142,6 +142,7 @@ func _on_Timer_timeout():
 		start_wander()
 	if mState == State.CAUGHT:
 		start_wander() # Just in case...
+		# TODO: Correct bug when 2 fishes get caught at the same time
 		
 #######################  GOBACK  ##########################
 var goback_duration = 2.2
