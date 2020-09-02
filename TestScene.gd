@@ -2,6 +2,7 @@ extends Spatial
 
 onready var mGameSaver = $GameSaver
 export var default_scene = "res://TestIsland.tscn"
+onready var mScreenShader = $SceneShader/ScreenShader
 
 var firstRun = true
 var mScene = null
@@ -74,3 +75,14 @@ func loadOnlyDefaultScene(dyn = true):
 	mGameSaver.restoreDatas(mScene)
 	if dyn and mScene.has_method("_dynamic_scene_load"):
 		mScene._dynamic_scene_load()
+
+func enableScreenShader(shaderName):
+	if shaderName == null:
+		mScreenShader.visible = false
+		if mScreenShader.material and mScreenShader.material.shader:
+			# Shader is a reference ? no need to free it (TODO)
+			mScreenShader.material.shader = null
+	else:
+		mScreenShader.visible = true
+		# mScreenShader.material is a ShaderMaterial
+		mScreenShader.material.shader = load(shaderName)

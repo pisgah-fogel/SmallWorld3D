@@ -1,9 +1,11 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://gfx/Robot.glb" type="PackedScene" id=2]
 [ext_resource path="res://Character.gd" type="Script" id=3]
 [ext_resource path="res://save/GameSaver.tscn" type="PackedScene" id=8]
 [ext_resource path="res://TestScene.gd" type="Script" id=9]
+
+[sub_resource type="ShaderMaterial" id=3]
 
 [sub_resource type="BoxShape" id=1]
 extents = Vector3( 0.795434, 0.892338, 0.828109 )
@@ -12,6 +14,18 @@ extents = Vector3( 0.795434, 0.892338, 0.828109 )
 "save",
 ]]
 script = ExtResource( 9 )
+
+[node name="SceneShader" type="CanvasLayer" parent="."]
+layer = 2
+
+[node name="ScreenShader" type="ColorRect" parent="SceneShader"]
+visible = false
+material = SubResource( 3 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="GameSaver" parent="." instance=ExtResource( 8 )]
 
