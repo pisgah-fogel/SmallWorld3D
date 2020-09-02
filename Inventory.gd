@@ -14,8 +14,6 @@ export(int) var chest_tile = 1
 export(int) var shop_tile = 2
 export(int) var bin_tile = 3
 
-
-
 var hand_open = load("res://gfx/hand_open.png")
 var hand_close = load("res://gfx/hand_close.png")
 export(Vector2) var hand_offset =  Vector2(50, 40)
@@ -69,7 +67,7 @@ func create_chest_background():
 func update_drafting_sprite(i:int, object):
 	if i < object.mObjects.size() and i >= 0:
 		if object.mObjects[i] != null:
-			mDraggedItem.position = mControl.get_local_mouse_position()
+			mDraggedItem.position = mControl.get_global_mouse_position()
 			mDraggedItem.visible = true
 			mDraggedItem.index = object.mObjects[i].id
 		else:
@@ -115,7 +113,7 @@ func is_inside_inventory(ix, iy, object):
 	return false
 
 func mouse_to_mItems_relative(pos):
-	var tmp = (pos - mItems.position)/mItems.scale + Vector2(100,100)*mItems.cell_size
+	var tmp = (pos - mItems.global_position)/mItems.scale + Vector2(100,100)*mItems.cell_size
 	tmp = tmp/mItems.cell_size
 	return tmp - Vector2(100, 100)
 
@@ -123,9 +121,9 @@ func _input(event):
 	if event is InputEventMouseButton:
 		get_tree().set_input_as_handled()
 		if event.button_index == BUTTON_LEFT and event.pressed:
-			start_drag_sprite(event.position)
+			start_drag_sprite(event.global_position  - offset)
 		elif event.button_index == BUTTON_LEFT and not event.pressed:
-			end_drag_sprite(event.position)
+			end_drag_sprite(event.global_position  - offset)
 	if event is InputEventMouseMotion:
 		follow_mouse(event)
 		get_tree().set_input_as_handled()
@@ -140,7 +138,7 @@ var draggingObj = null
 func follow_mouse(event):
 	if dragging and draggingObj != null:
 		mDraggedItem.visible = true
-		mDraggedItem.position = event.position
+		mDraggedItem.position = event.global_position - offset
 
 ###################################### START DRAG #########################################
 var originalPos = 0
