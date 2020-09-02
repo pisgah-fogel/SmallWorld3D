@@ -5,9 +5,9 @@
 [ext_resource path="res://save/GameSaver.tscn" type="PackedScene" id=8]
 [ext_resource path="res://TestScene.gd" type="Script" id=9]
 
-[sub_resource type="ShaderMaterial" id=3]
+[sub_resource type="ShaderMaterial" id=1]
 
-[sub_resource type="BoxShape" id=1]
+[sub_resource type="BoxShape" id=2]
 extents = Vector3( 0.795434, 0.892338, 0.828109 )
 
 [node name="TestScene" type="Spatial" groups=[
@@ -20,7 +20,7 @@ layer = 2
 
 [node name="ScreenShader" type="ColorRect" parent="SceneShader"]
 visible = false
-material = SubResource( 3 )
+material = SubResource( 1 )
 anchor_right = 1.0
 anchor_bottom = 1.0
 __meta__ = {
@@ -55,7 +55,7 @@ transform = Transform( 1, 0, 0, 0, 0.837089, 0.547067, 0, -0.547067, 0.837089, 0
 
 [node name="CollisionShape" type="CollisionShape" parent="Character"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00174427, 0.912558, 0.0912843 )
-shape = SubResource( 1 )
+shape = SubResource( 2 )
 
 [node name="Timer" type="Timer" parent="Character"]
 [connection signal="timeout" from="Character/Timer" to="Character" method="_on_Timer_timeout"]

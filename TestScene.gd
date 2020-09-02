@@ -76,13 +76,22 @@ func loadOnlyDefaultScene(dyn = true):
 	if dyn and mScene.has_method("_dynamic_scene_load"):
 		mScene._dynamic_scene_load()
 
+var mScreenShaderFilename = ""
 func enableScreenShader(shaderName):
 	if shaderName == null:
 		mScreenShader.visible = false
 		if mScreenShader.material and mScreenShader.material.shader:
 			# Shader is a reference ? no need to free it (TODO)
 			mScreenShader.material.shader = null
+		mScreenShaderFilename = ""
 	else:
 		mScreenShader.visible = true
 		# mScreenShader.material is a ShaderMaterial
 		mScreenShader.material.shader = load(shaderName)
+		mScreenShaderFilename = shaderName
+
+func isShaderActive():
+	return mScreenShader.visible
+
+func getActiveShaderFilename() -> String:
+	return mScreenShaderFilename
