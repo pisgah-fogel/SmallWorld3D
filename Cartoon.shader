@@ -1,83 +1,67 @@
 /*
-shader_type canvas_item;
-//render_mode unshaded;
-
-uniform float threshold : hint_range(0.0, 1.0) = 0.9;
-
-vec3 applyRGB(mat3 op, samplerCube screenT, vec3 screenUV) {
-	mat3 Ir;
-	mat3 Ig;
-	mat3 Ib;
-	Ir[0][0] = texture(screenT, vec2(float(screenUV.x) - 1f, float(screenUV.y) - 1f)).r;
-	Ir[0][1] = texture(screenT, vec2(float(screenUV.x) - 1f, float(screenUV.y))).r;
-	Ir[0][2] = texture(screenT, vec2(float(screenUV.x) - 1f, float(screenUV.y) + 1f)).r;
-	Ir[1][0] = texture(screenT, vec2(float(screenUV.x), float(screenUV.y) - 1f)).r;
-	Ir[1][1] = texture(screenT, vec2(float(screenUV.x), float(screenUV.y))).r;
-	Ir[1][2] = texture(screenT, vec2(float(screenUV.x), float(screenUV.y) + 1f)).r;
-	Ir[2][0] = texture(screenT, vec2(float(screenUV.x) + 1f, float(screenUV.y) - 1f)).r;
-	Ir[2][1] = texture(screenT, vec2(float(screenUV.x) + 1f, float(screenUV.y))).r;
-	Ir[2][2] = texture(screenT, vec2(float(screenUV.x) + 1f, float(screenUV.y) + 1f)).r;
-	
-	Ig[0][0] = texture(screenT, vec2(float(screenUV.x) - 1f, float(screenUV.y) - 1f)).g;
-	Ig[0][1] = texture(screenT, vec2(float(screenUV.x) - 1f, float(screenUV.y))).g;
-	Ig[0][2] = texture(screenT, vec2(float(screenUV.x) - 1f, float(screenUV.y) + 1f)).g;
-	Ig[1][0] = texture(screenT, vec2(float(screenUV.x), float(screenUV.y) - 1f)).g;
-	Ig[1][1] = texture(screenT, vec2(float(screenUV.x), float(screenUV.y))).g;
-	Ig[1][2] = texture(screenT, vec2(float(screenUV.x), float(screenUV.y) + 1f)).g;
-	Ig[2][0] = texture(screenT, vec2(float(screenUV.x) + 1f, float(screenUV.y) - 1f)).g;
-	Ig[2][1] = texture(screenT, vec2(float(screenUV.x) + 1f, float(screenUV.y))).g;
-	Ig[2][2] = texture(screenT, vec2(float(screenUV.x) + 1f, float(screenUV.y) + 1f)).g;
-	
-	Ib[0][0] = texture(screenT, vec2(float(screenUV.x) - 1f, float(screenUV.y) - 1f)).b;
-	Ib[0][1] = texture(screenT, vec2(float(screenUV.x) - 1f, float(screenUV.y))).b;
-	Ib[0][2] = texture(screenT, vec2(float(screenUV.x) - 1f, float(screenUV.y) + 1f)).b;
-	Ib[1][0] = texture(screenT, vec2(float(screenUV.x), float(screenUV.y) - 1f)).b;
-	Ib[1][1] = texture(screenT, vec2(float(screenUV.x), float(screenUV.y))).b;
-	Ib[1][2] = texture(screenT, vec2(float(screenUV.x), float(screenUV.y) + 1f)).b;
-	Ib[2][0] = texture(screenT, vec2(float(screenUV.x) + 1f, float(screenUV.y) - 1f)).b;
-	Ib[2][1] = texture(screenT, vec2(float(screenUV.x) + 1f, float(screenUV.y))).b;
-	Ib[2][2] = texture(screenT, vec2(float(screenUV.x) + 1f, float(screenUV.y) + 1f)).b;
-
-	float r = dot(op[0], Ir[0]) + dot(op[1], Ir[1]) + dot(op[2], Ir[2]);
-	float g = dot(op[0], Ig[0]) + dot(op[1], Ig[1]) + dot(op[2], Ig[2]);
-	float b = dot(op[0], Ib[0]) + dot(op[1], Ib[1]) + dot(op[2], Ib[2]);
-	return vec3(r, g, b);
-}
-
-void fragment()
-{
-	//vec4 bg = texture(SCREEN_TEXTURE, SCREEN_UV);
-	mat3 op = mat3(vec3(1.0, 2.0, 1.0), vec3(0.0, 1.0, 0.0), vec3(-1.0, -2.0, -1.0));
-	vec3 v = applyRGB( op, SCREEN_TEXTURE, SCREEN_UV)
-	COLOR = vec4(v, 1f);
-	
-}
+This shader gives a cartoon effect.
+Steps ares:
+	- Convert to black and white
+	- Sobel (2 kernel convolutions and square root of the 2 results)
+	- Threshold
+	- Multiply with the original color
+	- Contrast/Brightness/Saturation
 */
 
-
 shader_type canvas_item;
+
+uniform float thr_min = 0.4f;
+uniform float thr_max = 1.0f;
 
 uniform float brightness = 1.0;
 uniform float contrast = 1.1;
 uniform float saturation = 1.1;
 
-void fragment() {
-    vec3 c = textureLod(SCREEN_TEXTURE, SCREEN_UV, 0.0).rgb;
-
-    c.rgb = mix(vec3(0.0), c.rgb, brightness);
-    c.rgb = mix(vec3(0.5), c.rgb, contrast);
-    c.rgb = mix(vec3(dot(vec3(1.0), c.rgb) * 0.33333), c.rgb, saturation);
-
-    COLOR.rgb = c;
+float bw(vec4 orig) {
+	float avg = (orig.r + orig.g + orig.b) / 3f;
+	return avg;
 }
 
-/*
-shader_type spatial;
 void fragment() {
-	vec3 c = textureLod(SCREEN_TEXTURE, SCREEN_UV, 0.0).rgb;
-    float depth = textureLod(DEPTH_TEXTURE, SCREEN_UV, 0.0).r;
-    vec4 upos = INV_PROJECTION_MATRIX * vec4(SCREEN_UV * 2.0 - 1.0, depth * 2.0 - 1.0, 1.0);
-    vec3 pixel_position = upos.xyz / upos.w;
+	mat3 bloc;
 	
-	ALBEDO = vec3(0.f, 0f, 0f);
-}*/
+	vec4 orig = texture(SCREEN_TEXTURE, SCREEN_UV);
+	
+	bloc[0][0] = bw(texture(SCREEN_TEXTURE, SCREEN_UV + vec2(-1f, -1f)*SCREEN_PIXEL_SIZE));
+	bloc[1][0] = bw(texture(SCREEN_TEXTURE, SCREEN_UV + vec2(0f, -1f)*SCREEN_PIXEL_SIZE));
+	bloc[2][0] = bw(texture(SCREEN_TEXTURE, SCREEN_UV + vec2(1f, -1f)*SCREEN_PIXEL_SIZE));
+	
+	bloc[0][1] = bw(texture(SCREEN_TEXTURE, SCREEN_UV + vec2(-1f, 0f)*SCREEN_PIXEL_SIZE));
+	bloc[1][1] = bw(orig);
+	bloc[2][1] = bw(texture(SCREEN_TEXTURE, SCREEN_UV + vec2(1f, 0f)*SCREEN_PIXEL_SIZE));
+	
+	bloc[0][2] = bw(texture(SCREEN_TEXTURE, SCREEN_UV + vec2(-1f, 1f)*SCREEN_PIXEL_SIZE));
+	bloc[1][2] = bw(texture(SCREEN_TEXTURE, SCREEN_UV + vec2(0f, 1f)*SCREEN_PIXEL_SIZE));
+	bloc[2][2] = bw(texture(SCREEN_TEXTURE, SCREEN_UV + vec2(1f, 1f)*SCREEN_PIXEL_SIZE));
+
+	mat3 xkernel = mat3(
+		vec3(1.0, 2.0, 1.0),
+		vec3(0.0, 0.0, 0.0),
+		vec3(-1.0, -2.0, -1.0)
+	);
+	mat3 ykernel = mat3(
+		vec3(1.0, 0.0, -1.0),
+		vec3(2.0, 0.0, -2.0),
+		vec3(1.0, 0.0, -1.0)
+	);
+	float a = dot(xkernel[0], bloc[0]) + dot(xkernel[1], bloc[1]) + dot(xkernel[2], bloc[2]);
+	float b = dot(ykernel[0], bloc[0]) + dot(ykernel[1], bloc[1]) + dot(ykernel[2], bloc[2]);
+	float pix = sqrt(pow(a, 2.0)) + sqrt(pow(b, 2.0));
+	pix = 1.f - pix;
+	
+	if (pix < thr_min)
+		pix = 0f;
+	else if (pix > thr_max)
+		pix = 1f;
+	
+	orig.rgb = mix(vec3(0.0), orig.rgb, brightness);
+    orig.rgb = mix(vec3(0.5), orig.rgb, contrast);
+    orig.rgb = mix(vec3(dot(vec3(1.0), orig.rgb) * 0.33333), orig.rgb, saturation);
+	
+	COLOR = vec4(orig.rgb*pix, 1f);
+}
