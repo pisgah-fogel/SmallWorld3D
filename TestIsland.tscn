@@ -356,10 +356,34 @@ collision_mask = 0
 
 [node name="CollisionShape" type="CollisionShape" parent="StaticLever/Area"]
 shape = SubResource( 19 )
+
+[node name="StaticLever2" type="StaticBody" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.327, 0.29073, 1.00962 )
+collision_mask = 0
+script = ExtResource( 12 )
+shaderPath = "res://Aberation.shader"
+
+[node name="CollisionShape" type="CollisionShape" parent="StaticLever2"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.00552547, 0.513057, 0 )
+shape = SubResource( 18 )
+
+[node name="MeshInstance" type="MeshInstance" parent="StaticLever2"]
+transform = Transform( 0.451192, 0, 0, 0, 0.416365, 0, 0, 0, 0.253737, 0, 0.448189, 0 )
+mesh = SubResource( 17 )
+material/0 = null
+
+[node name="Area" type="Area" parent="StaticLever2"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.43746, 0 )
+collision_layer = 16
+collision_mask = 0
+
+[node name="CollisionShape" type="CollisionShape" parent="StaticLever2/Area"]
+shape = SubResource( 19 )
 [connection signal="body_entered" from="StaticBin/Area" to="StaticBin" method="_on_Area_body_entered"]
 [connection signal="body_entered" from="StaticShop/Area" to="StaticShop" method="_on_Area_body_entered"]
 [connection signal="body_entered" from="StaticTestHouse/Area" to="StaticTestHouse" method="_on_Area_body_entered"]
 [connection signal="timeout" from="FishSpawner/Timer" to="FishSpawner" method="_on_Timer_timeout"]
 [connection signal="body_entered" from="StaticLever/Area" to="StaticLever" method="_on_Area_body_entered"]
+[connection signal="body_entered" from="StaticLever2/Area" to="StaticLever2" method="_on_Area_body_entered"]
 
 [editable path="StaticTestHouse/TestHouseExt"]
