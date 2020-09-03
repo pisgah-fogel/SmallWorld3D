@@ -12,3 +12,5 @@ data_*/
 
 # Blender
 *.blend1
+
+export/
