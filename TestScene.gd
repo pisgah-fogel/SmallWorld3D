@@ -11,8 +11,9 @@ func _ready():
 	mGameSaver.load(0)
 	randomize()
 	if firstRun:
-		show_start_up_dialog()
+		loadOnlyDefaultScene(false)
 		firstRun = false
+		show_start_up_dialog()
 	
 func _notification(what):
 	if (what == MainLoop.NOTIFICATION_WM_QUIT_REQUEST):
@@ -22,6 +23,32 @@ func show_start_up_dialog():
 	var Dialogs = load("res://Dialogs.tscn")
 	var mDialogs = Dialogs.instance()
 	self.add_child(mDialogs)
+	mDialogs.mScript = [
+			{
+				"text":"Developpeur:\nJ'ai un probleme avec mon coffre,"
+			},
+			{
+				"text":"il apparait parfois vide a la premiere ouverture..."
+			},
+			{
+				"text":"Les graphimes vont etre ameliores ne t'inquiete pas",
+				"question":true,
+				"clear":["isOk"],
+				"options":[
+					{"text":"Ok", "set":{"isOk":true}},
+					{"text":"Autre...", "set":{"isOk":false}}
+					]
+			},
+			{
+				"check":{"isOk":true},
+				"text":"Amuses toi bien !"
+			},
+			{
+				"check":{"isOk":false},
+				"text":"Peut importe... Les graphismes ne sont pas pret"
+			}
+		]
+	mDialogs._popup()
 
 func save(save_game: Resource):
 	save_game.data["TestScene_firstrun"] = self.firstRun
@@ -41,6 +68,7 @@ func load(save_game: Resource):
 		print("Loading ", save_game.data["Scene"])
 		loadScene(save_game.data["Scene"], false)
 	else:
+		print("Error: Cannot load scene, let's load old one")
 		loadOnlyDefaultScene(false)
 
 func freeScene():

@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=2]
+[gd_scene load_steps=18 format=2]
 
 [ext_resource path="res://StaticShop.tscn" type="PackedScene" id=1]
 [ext_resource path="res://StaticTree.tscn" type="PackedScene" id=2]
@@ -32,6 +32,9 @@ subdivide_depth = 3
 
 [sub_resource type="BoxShape" id=5]
 extents = Vector3( 0.847774, 0.863915, 0.725712 )
+
+[sub_resource type="BoxShape" id=6]
+extents = Vector3( 0.996751, 1, 0.89594 )
 
 [node name="Scene" type="Spatial"]
 
@@ -142,6 +145,15 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.18967, 0.142967 )
 shape = SubResource( 5 )
 
 [node name="Timer" type="Timer" parent="TRex"]
+
+[node name="TalkArea" type="Area" parent="TRex"]
+collision_layer = 16
+collision_mask = 0
+
+[node name="CollisionShape" type="CollisionShape" parent="TRex/TalkArea"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.25468, 0.111087 )
+shape = SubResource( 6 )
 [connection signal="timeout" from="TRex/Timer" to="TRex" method="_on_Timer_timeout"]
+[connection signal="body_entered" from="TRex/TalkArea" to="TRex" method="_on_TalkArea_body_entered"]
 
 [editable path="TRex/Trex"]

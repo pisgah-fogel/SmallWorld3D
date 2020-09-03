@@ -4,7 +4,9 @@
 [ext_resource path="res://CuteFont.tres" type="DynamicFont" id=2]
 [ext_resource path="res://Dialogs.gd" type="Script" id=3]
 
-[node name="Dialogs" type="CanvasLayer"]
+[node name="Dialogs" type="CanvasLayer" groups=[
+"save",
+]]
 script = ExtResource( 3 )
 
 [node name="Control" type="Control" parent="."]

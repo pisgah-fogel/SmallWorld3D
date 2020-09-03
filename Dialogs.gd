@@ -4,7 +4,6 @@ onready var mControl = $Control
 onready var mText = $Control/Text
 
 var is_reading = false
-var current = null
 var current_index = 0
 
 var allChoices = []
@@ -18,35 +17,11 @@ export(int) var choice_h = 110
 const Choice = preload("res://Choice.tscn")
 
 var variables = {}
-var mScript = [
-	{
-		"startup": true,
-		"msg": [
+var mScript =[
 			{
-				"text":"Developpeur:\nJ'ai un probleme avec mon coffre,"
-			},
-			{
-				"text":"il apparait parfois vide a la premiere ouverture..."
-			},
-			{
-				"text":"Les graphimes vont etre ameliores ne t'inquiete pas",
-				"question":true,
-				"options":[
-					{"text":"Ok", "set":{"isOk":true}},
-					{"text":"Autre...", "set":{"isOk":false}}
-					]
-			},
-			{
-				"check":{"isOk":true},
-				"text":"Amuses toi bien !"
-			},
-			{
-				"check":{"isOk":false},
-				"text":"Peut importe... Les graphismes ne sont pas pret"
+				"text":"Developpeur:\nVous ne devriez pas voir ce message désolé..."
 			}
 		]
-	}
-]
 
 func update_placing():
 	offset.y = mControl.get_viewport_rect().size.y-600
@@ -55,17 +30,19 @@ func update_placing():
 func stop_reading():
 	clear_choices()
 	is_reading = false
-	current = null
 	current_index = 0
 	mControl.visible = false
+	get_tree().get_root().get_node("TestScene/GameSaver").appendToSave(self)
+	self.queue_free()
 
 func update_text():
+	clear_choices()
 	selection = -1
-	if current and is_reading:
-		mText.text = current[current_index]["text"]
-		if "options" in current[current_index]:
+	if is_reading:
+		mText.text = mScript[current_index]["text"]
+		if "options" in mScript[current_index]:
 			var i = 0
-			for option in current[current_index]["options"]:
+			for option in mScript[current_index]["options"]:
 				var mChoise = Choice.instance()
 				mChoise.global_position = Vector2(choice_x, choice_y+i*choice_h)
 				i += 1
@@ -73,6 +50,7 @@ func update_text():
 				mChoise.setText(option["text"])
 				mChoise.setActive(false)
 				allChoices.append(mChoise)
+			# Activate the first choice
 			if allChoices.size() > 0:
 				selection = 0
 				allChoices[0].setActive(true)
@@ -84,34 +62,48 @@ func clear_choices():
 	selection = -1
 
 func next_text():
-	clear_choices()
-	if current and is_reading:
-		# if no check: ok
-		# if check it need to match variables
-		var continue_loop = true
-		while continue_loop:
-			current_index += 1
-			if current_index < current.size() and "check" in current[current_index]:
-				for v in current[current_index]["check"]:
-					if v in variables and variables[v] == current[current_index]["check"][v]:
-						continue_loop = false
-			else:
-				continue_loop = false
+	if is_reading:
+		current_index += 1
+		readScript()
 		
-		if current_index < current.size():
-			update_text()
+
+func readScript():
+	while true:
+		if current_index < mScript.size() and "check" in mScript[current_index]:
+			var check_passed = true
+			for v in mScript[current_index]["check"]:
+				if v in variables and variables[v] == mScript[current_index]["check"][v]:
+					pass
+				elif mScript[current_index]["check"][v] is bool and mScript[current_index]["check"][v] == false and not v in variables:
+					pass
+				else:
+					check_passed = false
+					break
+			if check_passed:
+				break # Stop looping over all messages and print this one
+			else:
+				pass
 		else:
-			stop_reading()
+			break; # Stop looping over all messages and print this one or just stop
+		current_index += 1
+	
+	if current_index < mScript.size():
+		update_text()
+	else:
+		stop_reading()
 
 func _ready():
-	get_tree().get_root().connect("size_changed", self, "_size_changed")
+	var _a_ = get_tree().get_root().connect("size_changed", self, "_size_changed")
+	get_tree().get_root().get_node("TestScene/GameSaver").restoreDatas(self)
+
+func _popup():
 	update_placing()
-	for item in mScript:
-		if item["startup"]:
-			is_reading = true
-			current = item["msg"]
-			current_index = 0
-	update_text()
+	if mScript.size() > 0:
+		current_index = 0
+		is_reading = true
+		readScript()
+	else:
+		stop_reading()
 
 func _size_changed():
 	update_placing()
@@ -122,7 +114,11 @@ func update_selection():
 	if allChoices.size() > selection and selection >= 0:
 		allChoices[selection].setActive(true)
 
-func _userChoosed(choice):
+func setVariables(choice):
+	if "clear" in choice:
+		for v in choice["clear"]:
+			if v in variables:
+				variables.erase(v)
 	if "set" in choice:
 		for v in choice["set"]:
 			variables[v] = choice["set"][v]
@@ -131,8 +127,9 @@ func _input(event):
 	if not is_reading:
 		return
 	elif event.is_action_pressed("ui_action"):
-		if allChoices.size() > 0 and selection >= 0:
-			_userChoosed(current[current_index]["options"][selection])
+		setVariables(mScript[current_index])
+		if current_index >= 0 and mScript.size() > current_index and "options" in mScript[current_index] and selection >= 0 and selection < mScript[current_index]["options"].size():
+			setVariables(mScript[current_index]["options"][selection])
 		next_text()
 	elif event.is_action_pressed("ui_up"):
 		if selection <= 0:
@@ -147,3 +144,12 @@ func _input(event):
 			selection += 1
 		update_selection()
 	get_tree().set_input_as_handled()
+
+func save(save_game: Resource):
+	var save_name = get_parent().filename + "_DialogsVars"
+	save_game.data[save_name] = variables
+
+func load(save_game: Resource):
+	var save_name = get_parent().filename + "_DialogsVars"
+	if save_name in save_game.data:
+		variables = save_game.data[save_name]
