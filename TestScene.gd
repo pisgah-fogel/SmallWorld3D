@@ -3,6 +3,7 @@ extends Spatial
 onready var mGameSaver = $GameSaver
 export var default_scene = "res://TestIsland.tscn"
 onready var mScreenShader = $SceneShader/ScreenShader
+onready var mNotificationsCanvas = $NotificationsCanvas
 
 var firstRun = true
 var mScene = null
@@ -18,6 +19,9 @@ func _ready():
 func _notification(what):
 	if (what == MainLoop.NOTIFICATION_WM_QUIT_REQUEST):
 		mGameSaver.save(0)
+
+func notify(text):
+	mNotificationsCanvas.notif(text)
 
 const Dialogs = preload("res://Dialogs.tscn")
 func show_start_up_dialog():
@@ -106,6 +110,7 @@ func loadOnlyDefaultScene(dyn = true):
 
 var mScreenShaderFilename = ""
 func enableScreenShader(shaderName):
+	self.notify("Special shader activated")
 	if shaderName == null:
 		mScreenShader.visible = false
 		if mScreenShader.material and mScreenShader.material.shader:
