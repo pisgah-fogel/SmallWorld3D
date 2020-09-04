@@ -36,6 +36,8 @@ func setInventoryList(list):
 	update_mItems()
 
 func _ready():
+	apparition = true
+	mControl.modulate.a = 0.0
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 	Input.set_custom_mouse_cursor(hand_open, Input.CURSOR_ARROW, hand_offset)
 	update_mItems()
@@ -45,6 +47,14 @@ func _ready():
 	get_tree().get_root().connect("size_changed", self, "_size_changed")
 	reset_drafting_sprite()
 	update_placing()
+
+func _process(delta):
+	if apparition:
+		if mControl.modulate.a < 0.9:
+			mControl.modulate.a += delta*1.0
+		else:
+			mControl.modulate.a = 1.0
+			apparition = false
 
 func _size_changed():
 	update_placing()
@@ -117,6 +127,7 @@ func mouse_to_mItems_relative(pos):
 	tmp = tmp/mItems.cell_size
 	return tmp - Vector2(100, 100)
 
+var apparition : bool = false
 func _input(event):
 	if event is InputEventMouseButton:
 		get_tree().set_input_as_handled()
