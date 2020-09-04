@@ -82,6 +82,7 @@ func process_wander(delta):
 func _on_TalkArea_body_entered(body):
 	speak()
 
+const Dialogs = preload("res://Dialogs.tscn")
 func speak():
 	# TODO: play a special animation when talking...
 	mState = State.IDLE
@@ -89,7 +90,6 @@ func speak():
 	mAnimationPlayer.get_animation("IdleTrack").loop = true
 	mAnimationPlayer.play("IdleTrack")
 	
-	var Dialogs = load("res://Dialogs.tscn")
 	var mDialogs = Dialogs.instance()
 	self.add_child(mDialogs)
 	mDialogs.mScript = [

@@ -15,6 +15,9 @@ onready var mTimer = $Timer
 enum State {MOVE, ACTION, INVENTORY, FISHING, GOTFISH}
 var mState = State.MOVE
 var Item = preload("res://Item.gd")
+const ActionCollision = preload("res://ActionCollision.tscn")
+const FishingRot = preload("res://gfx/FishingRot.glb")
+const Bait = preload("res://StaticBait.tscn")
 
 var objectList = []
 class Wallet:
@@ -22,7 +25,6 @@ class Wallet:
 var mWallet = Wallet.new()
 
 func _ready():
-	var ActionCollision = load("res://ActionCollision.tscn")
 	var mActionCollision = ActionCollision.instance()
 	mCollisionShape = mActionCollision.get_node("CollisionShape")
 	mMesh.add_child(mActionCollision)
@@ -98,7 +100,6 @@ func canUseFishingRot():
 
 func equipeFishingRot():
 	if mFishingRot == null:
-		var FishingRot = load("res://gfx/FishingRot.glb")
 		mFishingRot = FishingRot.instance()
 		mMesh.add_child(mFishingRot)
 
@@ -109,7 +110,6 @@ func start_fishing():
 	reset_movements_and_picking()
 	equipeFishingRot() # Just to be sure
 	if mBait == null:
-		var Bait = load("res://StaticBait.tscn")
 		mBait = Bait.instance()
 		
 		# Local movement (relative to the player)

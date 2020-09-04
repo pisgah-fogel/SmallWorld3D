@@ -14,8 +14,8 @@ export(int) var chest_tile = 1
 export(int) var shop_tile = 2
 export(int) var bin_tile = 3
 
-var hand_open = load("res://gfx/hand_open.png")
-var hand_close = load("res://gfx/hand_close.png")
+const hand_open = preload("res://gfx/hand_open.png")
+const hand_close = preload("res://gfx/hand_close.png")
 export(Vector2) var hand_offset =  Vector2(50, 40)
 
 var mChest = null setget setChest

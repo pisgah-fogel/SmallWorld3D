@@ -19,8 +19,8 @@ func _notification(what):
 	if (what == MainLoop.NOTIFICATION_WM_QUIT_REQUEST):
 		mGameSaver.save(0)
 
+const Dialogs = preload("res://Dialogs.tscn")
 func show_start_up_dialog():
-	var Dialogs = load("res://Dialogs.tscn")
 	var mDialogs = Dialogs.instance()
 	self.add_child(mDialogs)
 	mDialogs.mScript = [
