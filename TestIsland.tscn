@@ -109,6 +109,7 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 15.3812, -0.348624, -22.182 )
 [node name="StaticChest" parent="." instance=ExtResource( 5 )]
 transform = Transform( 0.197667, 0, -1.99021, 0, 2, 0, 1.99021, 0, 0.197667, 6.5272, 0.283073, -7.21301 )
 num_column = 5
+num_row = 2
 
 [node name="StaticBin" parent="." instance=ExtResource( 4 )]
 
