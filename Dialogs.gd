@@ -11,7 +11,7 @@ var allChoices = []
 var selection = 0
 
 export(int) var choice_x = 870
-export(int) var choice_y = 200
+export(int) var choice_y = -200
 export(int) var choice_h = 110
 
 const Choice = preload("res://Choice.tscn")
@@ -46,7 +46,7 @@ func update_text():
 				var mChoise = Choice.instance()
 				mChoise.global_position = Vector2(choice_x, choice_y+i*choice_h)
 				i += 1
-				add_child(mChoise)
+				mControl.add_child(mChoise)
 				mChoise.setText(option["text"])
 				mChoise.setActive(false)
 				allChoices.append(mChoise)
@@ -92,9 +92,12 @@ func readScript():
 	else:
 		stop_reading()
 
+var apparition: bool = false
 func _ready():
 	var _a_ = get_tree().get_root().connect("size_changed", self, "_size_changed")
 	get_tree().get_root().get_node("TestScene/GameSaver").restoreDatas(self)
+	apparition = true
+	mControl.modulate.a = 0.0
 
 func _popup():
 	update_placing()
@@ -122,6 +125,14 @@ func setVariables(choice):
 	if "set" in choice:
 		for v in choice["set"]:
 			variables[v] = choice["set"][v]
+
+func _process(delta):
+	if apparition:
+		if mControl.modulate.a < 0.9:
+			mControl.modulate.a += delta*1.0
+		else:
+			mControl.modulate.a = 1.0
+			apparition = false
 
 func _input(event):
 	if not is_reading:

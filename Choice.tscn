@@ -5,7 +5,6 @@
 [ext_resource path="res://CuteFont.tres" type="DynamicFont" id=3]
 
 [node name="Choice" type="Sprite"]
-position = Vector2( 901.268, 386.812 )
 texture = ExtResource( 1 )
 script = ExtResource( 2 )
 

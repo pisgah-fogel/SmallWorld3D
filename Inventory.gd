@@ -51,7 +51,7 @@ func _ready():
 func _process(delta):
 	if apparition:
 		if mControl.modulate.a < 0.9:
-			mControl.modulate.a += delta*1.0
+			mControl.modulate.a += delta*4.0
 		else:
 			mControl.modulate.a = 1.0
 			apparition = false
