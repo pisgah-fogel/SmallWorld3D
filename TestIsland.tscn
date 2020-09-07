@@ -117,10 +117,10 @@ num_column = 5
 num_row = 2
 
 [node name="StaticBin" parent="." instance=ExtResource( 4 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.564449, -10.851 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.564449, -10.4786 )
 
 [node name="StaticShop" parent="." instance=ExtResource( 1 )]
-transform = Transform( 0.0988334, 0, -0.995104, 0, 1, 0, 0.995104, 0, 0.0988334, 3.87369, -0.740371, -16.2061 )
+transform = Transform( 0.0691834, 0, -0.995104, 0, 0.7, 0, 0.696573, 0, 0.0988334, 3.42021, -0.636731, -15.991 )
 
 [node name="StaticTestHouse" parent="." instance=ExtResource( 3 )]
 

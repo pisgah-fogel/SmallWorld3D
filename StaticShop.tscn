@@ -1,25 +1,33 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://StaticShop.gd" type="Script" id=1]
+[ext_resource path="res://gfx/autoshop.glb" type="PackedScene" id=2]
+[ext_resource path="res://gradientMaterial.tres" type="Material" id=3]
 
-[sub_resource type="BoxShape" id=7]
-extents = Vector3( 0.415165, 0.334346, 0.406846 )
+[sub_resource type="BoxShape" id=1]
+extents = Vector3( 0.81918, 1.5393, 0.85586 )
 
-[sub_resource type="BoxShape" id=8]
-extents = Vector3( 0.264449, 0.230816, 0.316052 )
+[sub_resource type="BoxShape" id=2]
+extents = Vector3( 0.572374, 1.53161, 0.856179 )
 
-[sub_resource type="CapsuleMesh" id=9]
+[sub_resource type="CapsuleMesh" id=3]
 
 [node name="StaticShop" type="StaticBody"]
-transform = Transform( 0.0988334, 0, -0.995104, 0, 1, 0, 0.995104, 0, 0.0988334, 3.87369, -0.740371, -6.9723 )
+transform = Transform( 0.0494167, 0, -0.497552, 0, 0.5, 0, 0.497552, 0, 0.0494167, 3.87369, -0.740371, -6.9723 )
 collision_mask = 0
 script = ExtResource( 1 )
 num_column = 5
 num_row = 2
 
+[node name="autoshop" parent="." instance=ExtResource( 2 )]
+transform = Transform( 0.0258978, 0, 0.999665, 0, 1, 0, -0.999665, 0, 0.0258978, 0.664733, -0.498696, -0.0560369 )
+
+[node name="Cube" parent="autoshop" index="0"]
+material/0 = ExtResource( 3 )
+
 [node name="CollisionShape" type="CollisionShape" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0146537, 1.70022, 0.24458 )
-shape = SubResource( 7 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.368576, 2.8898, 0.209429 )
+shape = SubResource( 1 )
 
 [node name="Area" type="Area" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -2.88247, 0.446999, 0.589488 )
@@ -27,11 +35,13 @@ collision_layer = 16
 collision_mask = 2147483648
 
 [node name="CollisionShape" type="CollisionShape" parent="Area"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 2.86033, 1.3237, -0.35132 )
-shape = SubResource( 8 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 2.93769, 2.45261, -0.343638 )
+shape = SubResource( 2 )
 
 [node name="MeshInstance" type="MeshInstance" parent="."]
 transform = Transform( -4.84288e-08, 0.3, -4.88762e-08, 0, -4.88762e-08, -0.3, -0.3, -4.84288e-08, 7.99361e-15, -0.0236859, 1.63673, 0.238489 )
-mesh = SubResource( 9 )
+mesh = SubResource( 3 )
 material/0 = null
 [connection signal="body_entered" from="Area" to="." method="_on_Area_body_entered"]
+
+[editable path="autoshop"]
