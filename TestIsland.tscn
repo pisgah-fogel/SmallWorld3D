@@ -38,7 +38,7 @@ extents = Vector3( 0.847774, 0.863915, 0.725712 )
 [sub_resource type="BoxShape" id=6]
 extents = Vector3( 0.996751, 1, 0.89594 )
 
-[node name="Scene" type="Spatial"]
+[node name="TestIsland" type="Spatial"]
 
 [node name="OmniLight" type="OmniLight" parent="."]
 transform = Transform( 0.991264, 0, 0.131893, 0, 1, 0, -0.131893, 0, 0.991264, 7.29403, 7.19363, -3.42037 )
@@ -148,7 +148,7 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.25468, 0.111087 )
 shape = SubResource( 6 )
 
 [node name="Drop" parent="." instance=ExtResource( 11 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 3.75418, 0.890645, 2.73145 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -19.5586, 0.509485, 5.94339 )
 
 [node name="Levers" type="Spatial" parent="."]
 
