@@ -18,6 +18,7 @@ export(int) var mDepth = 0
 export(int) var default_speed = 2
 export(int) var speed = 2
 export(int) var tasting_propability = 60
+export(float) var distance_eating = 0.7
 
 export(float) var timer_objectif = 1
 export(int) var bad_luck = 5
@@ -113,7 +114,7 @@ func start_chasing():
 func state_chasing(delta):
 	if food != null:
 		var baitLoc = food.to_global(Vector3(0, 0, 0))
-		if Vector2(translation.x, translation.z).distance_to(Vector2(baitLoc.x, baitLoc.z)) < 0.05:
+		if Vector2(translation.x, translation.z).distance_to(Vector2(baitLoc.x, baitLoc.z)) < distance_eating:
 			food.beating()
 			if randi()%100>tasting_propability:
 				print("Beating")
@@ -125,7 +126,7 @@ func state_chasing(delta):
 				start_goback()
 		else:
 			# move to bait
-			self.look_at(baitLoc, Vector3(0, 1, 0))
+			smoothLookAt(baitLoc)
 			translate(Vector3(0, 0, -delta*speed))
 	else:
 		start_wander()
@@ -157,7 +158,7 @@ func state_goback(delta):
 		start_chasing()
 	if food != null:
 		var baitLoc = food.to_global(Vector3(0, 0, 0))
-		self.look_at(baitLoc, Vector3(0, 1, 0))
+		smoothLookAt(baitLoc)
 		translate(Vector3(0, 0, delta*speed))
 	else:
 		start_wander()
@@ -198,13 +199,16 @@ func start_wander():
 	mAnimationPlayer.get_animation("Static").loop = true
 	mAnimationPlayer.play("Static")
 	destination = random_vec_in_zone()
-	self.look_at(Vector3(destination.x, mDepth, destination.y), Vector3(0, 1, 0))
+	smoothLookAt(Vector3(destination.x, mDepth, destination.y))
 	mState = State.WANDER
+
+func smoothLookAt(target):
+	var targetTransform = global_transform.looking_at(target, Vector3(0.0, 1.0, 0.0))
+	self.global_transform = self.global_transform.interpolate_with(targetTransform, 0.1)
 
 func state_wander(delta):
 	if translation.distance_to(Vector3(destination.x, mDepth, destination.y)) <= 0.1:
 		destination = random_vec_in_zone()
 	else:
-		# TODO: Smooth rotation
-		self.look_at(Vector3(destination.x, mDepth, destination.y), Vector3(0, 1, 0))
+		smoothLookAt(Vector3(destination.x, mDepth, destination.y))
 		translate(Vector3(0, 0, -delta*speed))
