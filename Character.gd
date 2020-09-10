@@ -36,6 +36,8 @@ func _physics_process(delta):
 	match mState:
 		State.MOVE:
 			state_move(delta)
+		State.FISHING:
+			state_fishing(delta)
 		State.ACTION:
 			pass # Wait for animation to finish
 
@@ -45,8 +47,6 @@ func _process(delta):
 			pass
 		State.ACTION:
 			pass
-		State.FISHING:
-			state_fishing(delta)
 		State.GOTFISH:
 			state_gotFish(delta)
 
@@ -121,21 +121,23 @@ func start_fishing():
 	mFishingRot.get_node("AnimationPlayer").play("SwingTrack")
 	
 func state_fishing(delta):
-	pass
-
-func event_fishing(event):
-	if event.is_action_pressed("ui_cancel") or event.is_action_pressed("ui_inventory") or event.is_action_pressed("ui_right")\
-		or event.is_action_pressed("ui_left") or event.is_action_pressed("ui_up") or event.is_action_pressed("ui_down"):
-		stop_fishing()
-	elif event.is_action_pressed("ui_action"):
+	if bait_pulling_strength != 0:
 		if mBait:
 			# Move bait to the player (using global coordinate, in case of bait rotation...)
 			var dir = (get_global_transform().origin - mBait.get_global_transform().origin).normalized()
-			mBait.global_translate(dir*0.1)
+			mBait.global_translate(dir*bait_pulling_strength*delta)
 			if mBait.get_global_transform().origin.distance_to(get_global_transform().origin) < 1.5:
 				stop_fishing()
 		else:
 			mState = State.MOVE
+
+var bait_pulling_strength = 0
+func event_fishing(event):
+	if event.is_action_pressed("ui_cancel") or event.is_action_pressed("ui_inventory") or event.is_action_pressed("ui_right")\
+		or event.is_action_pressed("ui_left") or event.is_action_pressed("ui_up") or event.is_action_pressed("ui_down"):
+		stop_fishing()
+		
+	bait_pulling_strength = event.get_action_strength("ui_action")
 
 func stop_fishing():
 	if mBait:
