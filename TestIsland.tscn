@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=2]
+[gd_scene load_steps=23 format=2]
 
 [ext_resource path="res://StaticShop.tscn" type="PackedScene" id=1]
 [ext_resource path="res://StaticTree.tscn" type="PackedScene" id=2]
@@ -10,9 +10,11 @@
 [ext_resource path="res://gfx/Trex.glb" type="PackedScene" id=8]
 [ext_resource path="res://TRex.gd" type="Script" id=9]
 [ext_resource path="res://gfx/Dirt.glb" type="PackedScene" id=10]
+[ext_resource path="res://gfx/farmingArea.glb" type="PackedScene" id=11]
 [ext_resource path="res://StaticShaderLever.tscn" type="PackedScene" id=12]
 [ext_resource path="res://gradientMaterial.tres" type="Material" id=13]
 [ext_resource path="res://TestIsland.gd" type="Script" id=14]
+[ext_resource path="res://gfx/bigPotatoPlant.glb" type="PackedScene" id=15]
 
 [sub_resource type="BoxShape" id=1]
 extents = Vector3( 26.7895, 1.01953, 23 )
@@ -37,6 +39,9 @@ extents = Vector3( 0.847774, 0.863915, 0.725712 )
 
 [sub_resource type="BoxShape" id=6]
 extents = Vector3( 0.996751, 1, 0.89594 )
+
+[sub_resource type="BoxShape" id=7]
+extents = Vector3( 1.16313, 1, 1.06052 )
 
 [node name="TestIsland" type="Spatial" groups=[
 "save",
@@ -166,9 +171,32 @@ shaderPath = "res://Aberation.shader"
 [node name="StaticShaderLever4" parent="Levers" instance=ExtResource( 12 )]
 transform = Transform( 0.016318, 0, -0.999867, 0, 1, 0, 0.999867, 0, 0.016318, -13.2843, 0.29073, -21.1137 )
 shaderPath = "res://Cartoon.shader"
+
+[node name="StaticFarmingArea" type="StaticBody" parent="."]
+
+[node name="CollisionShape" type="CollisionShape" parent="StaticFarmingArea"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0482814, 0.150292, 0.467796 )
+shape = SubResource( 7 )
+
+[node name="farmingArea" parent="StaticFarmingArea" instance=ExtResource( 11 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.614154, -6.08631 )
+
+[node name="FarminArea" parent="StaticFarmingArea/farmingArea" index="0"]
+transform = Transform( 1, 0, 0, 0, 0.35935, 0, 0, 0, 1, 0, 0.101149, 6.60629 )
+material/0 = ExtResource( 13 )
+
+[node name="bigPotatoPlant" parent="StaticFarmingArea" instance=ExtResource( 15 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.133941, 0.693805, -6.21152 )
+
+[node name="BigPotatoPlant" parent="StaticFarmingArea/bigPotatoPlant" index="0"]
+material/0 = ExtResource( 13 )
 [connection signal="timeout" from="TRex/Timer" to="TRex" method="_on_Timer_timeout"]
 [connection signal="body_entered" from="TRex/TalkArea" to="TRex" method="_on_TalkArea_body_entered"]
 
 [editable path="Land/Dirt"]
 
 [editable path="TRex/Trex"]
+
+[editable path="StaticFarmingArea/farmingArea"]
+
+[editable path="StaticFarmingArea/bigPotatoPlant"]
