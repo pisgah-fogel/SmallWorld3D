@@ -64,6 +64,37 @@ func _on_Timer_timeout():
 		State.ACTION:
 			pass
 
+var is_dropping: bool = false
+const DropPlacement = preload("res://DropPlacement.tscn")
+const Drop = preload("res://Drop.tscn")
+var mDropPlacement = null
+var dropping_col_count = 0
+# This is a state inside MOVING state
+func startDopping():
+	is_dropping = true
+	dropping_col_count = 0
+	if not mDropPlacement:
+		mDropPlacement = DropPlacement.instance()
+		mDropPlacement.connect("body_entered", self, "dropping_body_entered")
+		mDropPlacement.connect("body_exited", self, "dropping_body_exited")
+		mMesh.add_child(mDropPlacement)
+
+func canDropObject():
+	return is_dropping and mDropPlacement and dropping_col_count == 0
+
+func dropping_body_entered(body):
+	dropping_col_count += 1
+
+func dropping_body_exited(body):
+	dropping_col_count -= 1
+
+func stopDopping():
+	is_dropping = false
+	dropping_col_count = 0
+	if mDropPlacement:
+		mDropPlacement.queue_free()
+		mDropPlacement = null
+
 func _unhandled_key_input(event):
 	match mState:
 		State.MOVE:
@@ -75,15 +106,20 @@ func _unhandled_key_input(event):
 			elif event.is_action_pressed("ui_inventory"):
 				start_inventory()
 			elif event.is_action_pressed("ui_cheat"):
+				if is_dropping:
+					if canDropObject():
+						var gift = Drop.instance()
+						var object = Item.new()
+						object.id = randi()%20
+						object.name = Item._name[object.id]
+						object.data["quality"] = randi()%3;
+						get_parent().add_child(gift)
+						gift.setItem(object)
+						gift.global_transform.origin = mDropPlacement.get_node("MeshInstance").global_transform.origin
+					stopDopping()
+				else:
+					startDopping()
 				mWallet.money += 10
-				if haveSpareSpace():
-					var object = Item.new()
-					#object.id = Item._id.ID_FISHINGROT
-					object.id = randi()%20
-					object.name = Item._name[object.id]
-					object.data["quality"] = randi()%3;
-					addObjectToInventory(object)
-					print("User cheated")
 			else:
 				event_move(event)
 		State.ACTION:
