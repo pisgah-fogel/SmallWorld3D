@@ -9,6 +9,8 @@ const hand_open = preload("res://gfx/hand_open.png")
 const hand_close = preload("res://gfx/hand_close.png")
 export(Vector2) var hand_offset =  Vector2(50, 40)
 
+signal userBought(item)
+
 var mItemsTosell = []
 
 func addRandomItem():
@@ -21,6 +23,8 @@ func addRandomItem():
 	mItemsTosell.append([buff, prize])
 
 func _ready():
+	if mUserWallet != null:
+		mMoneyLabel.text = str(mUserWallet.money)
 	get_tree().get_root().connect("size_changed", self, "_size_changed")
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 	Input.set_custom_mouse_cursor(hand_close, Input.CURSOR_ARROW, hand_offset)
@@ -62,7 +66,7 @@ func _input(event):
 		if event.button_index == BUTTON_LEFT and event.pressed:
 			if selection != null:
 				print("Bought ", selection[0].name, " for ", selection[1])
-			
+				emit_signal("userBought", selection[0])
 	if event is InputEventMouseMotion:
 		get_tree().set_input_as_handled()
 		var pos = event.global_position  - offset
@@ -83,3 +87,10 @@ func update_placing():
 
 func _size_changed():
 	update_placing()
+
+onready var mMoneyLabel = $Control/MoneyLabel
+var mUserWallet = null setget setUserWallet
+func setUserWallet(wallet):
+	mUserWallet = wallet
+	if mMoneyLabel != null and mUserWallet != null:
+		mMoneyLabel.text = str(mUserWallet.money)
