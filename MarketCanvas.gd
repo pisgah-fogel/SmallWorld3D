@@ -9,7 +9,7 @@ const hand_open = preload("res://gfx/hand_open.png")
 const hand_close = preload("res://gfx/hand_close.png")
 export(Vector2) var hand_offset =  Vector2(50, 40)
 
-signal userBought(item)
+signal userBought(item, giver)
 
 var mItemsTosell = []
 
@@ -49,7 +49,7 @@ func update_display():
 		mTileMap.set_cell(4, y_tile, 24)
 		mTileMap.set_cell(5, y_tile, 24)
 		mTileMap.set_cell(6, y_tile, 24)
-		mTileMap.set_cell(7, y_tile, 25)
+		mTileMap.set_cell(7, y_tile, 25) # TODO: print different tile if we don't have enough money
 		var tmp = Node2DItem.instance()
 		tmp.get_node("ItemName").text = item[0].name
 		tmp.get_node("ItemPrize").text = str(item[1])
@@ -61,14 +61,21 @@ func update_display():
 
 var selection = null
 func _input(event):
+	if event.is_action_pressed("ui_action") or event.is_action_pressed("ui_cancel") or event.is_action_pressed("ui_inventory"):
+		self.queue_free()
 	if event is InputEventMouseButton:
-		get_tree().set_input_as_handled()
 		if event.button_index == BUTTON_LEFT and event.pressed:
 			if selection != null:
-				print("Bought ", selection[0].name, " for ", selection[1])
-				emit_signal("userBought", selection[0])
+				# TODO check if inventory is full
+				if mUserWallet.money > selection[1]:
+					mUserWallet.money -= selection[1]
+					mMoneyLabel.text = str(mUserWallet.money)
+					emit_signal("userBought", selection[0], self)
+				else:
+					get_tree().get_root().get_node("TestScene").notify("Not enough money")
+					
 	if event is InputEventMouseMotion:
-		get_tree().set_input_as_handled()
+		
 		var pos = event.global_position  - offset
 		var tmp = (pos - mTileMap.global_position)/mTileMap.scale
 		tmp = tmp/mTileMap.cell_size
@@ -80,6 +87,10 @@ func _input(event):
 		else:
 			Input.set_custom_mouse_cursor(hand_close, Input.CURSOR_ARROW, hand_offset)
 			selection = null
+	get_tree().set_input_as_handled()
+
+func canRemoveObject(object):
+	pass
 
 func update_placing():
 	offset.y = mControl.get_viewport_rect().size.y-600

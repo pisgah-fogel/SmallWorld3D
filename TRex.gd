@@ -79,10 +79,13 @@ func process_wander(delta):
 	if self.global_transform.origin.distance_to(target) < 5.0:
 		pickUpNewRandTarget()
 
+var mCharacter = null
 func _on_TalkArea_body_entered(body):
+	mCharacter = body.get_parent().get_parent()
 	speak()
 
 const Dialogs = preload("res://Dialogs.tscn")
+var mDialogs = null
 func speak():
 	# TODO: play a special animation when talking...
 	mState = State.IDLE
@@ -90,7 +93,7 @@ func speak():
 	mAnimationPlayer.get_animation("IdleTrack").loop = true
 	mAnimationPlayer.play("IdleTrack")
 	
-	var mDialogs = Dialogs.instance()
+	mDialogs = Dialogs.instance()
 	self.add_child(mDialogs)
 	mDialogs.mScript = [
 			{
@@ -139,8 +142,21 @@ func speak():
 	mDialogs.connect("tree_exiting", self, "_DialogEnded")
 	mDialogs._popup()
 
+const MarketCanvas = preload("res://MarketCanvas.tscn")
+var mMarketCanvas = null
 func _DialogMarketOpen():
-	print("Trex have to open it's market") # TODO
+	if mDialogs:
+		mDialogs.ignoreInputs = true
+	mMarketCanvas = MarketCanvas.instance()
+	if mCharacter:
+		mMarketCanvas.setUserWallet(mCharacter.mWallet)
+		mMarketCanvas.connect("userBought", mCharacter, "receiveObject")
+	mMarketCanvas.connect("tree_exited", self, "_marketClosed")
+	add_child(mMarketCanvas)
+
+func _marketClosed():
+	if mDialogs:
+		mDialogs.ignoreInputs = false
 
 func _DialogEnded():
 	mState = State.IDLE

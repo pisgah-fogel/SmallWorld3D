@@ -62,6 +62,7 @@ shape = SubResource( 2 )
 [node name="Timer" type="Timer" parent="Character"]
 
 [node name="NotificationsCanvas" type="CanvasLayer" parent="."]
+layer = 3
 script = ExtResource( 4 )
 
 [node name="ColorRect" type="ColorRect" parent="NotificationsCanvas"]

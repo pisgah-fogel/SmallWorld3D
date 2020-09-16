@@ -19,7 +19,6 @@ func _on_Area_body_entered(body):
 	if active and mItem:
 		active = false
 		body.get_parent().get_parent().receiveObject(mItem, self)
-		var level = get_tree().get_root().get_node("TestScene").notify("You get an "+mItem.name)
 
 func canRemoveObject(obj):
 	active = false

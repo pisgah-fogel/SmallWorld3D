@@ -291,21 +291,21 @@ func clear_null_inventory():
 		objectList.pop_back()
 
 func receiveObject(object, giver):
-	print("Player received ", object.name)
 	if haveSpareSpace():
 		giver.canRemoveObject(object)
 		addObjectToInventory(object)
+		get_tree().get_root().get_node("TestScene").notify(object.name+" received")
 	else:
 		# TODO handle inventory full
 		giver.canRemoveObject(object)
-		print("Inventory is full")
+		get_tree().get_root().get_node("TestScene").notify("Inventory is full")
 
 func haveSpareSpace():
 	var count = 0
 	for item in objectList:
 		if item == null:
 			count += 1
-	return objectList.size()-count < max_inventory
+	return objectList.size()-count < max_inventory-1
 
 func addObjectToInventory(object):
 	for i in range(1, objectList.size()):

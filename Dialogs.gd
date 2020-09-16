@@ -144,8 +144,9 @@ func _process(delta):
 			mControl.modulate.a = 1.0
 			apparition = false
 
+var ignoreInputs = false
 func _input(event):
-	if not is_reading:
+	if ignoreInputs or not is_reading:
 		return
 	elif event.is_action_pressed("ui_action"):
 		setVariables(mScript[current_index])
