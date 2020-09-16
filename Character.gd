@@ -308,10 +308,12 @@ func haveSpareSpace():
 	return objectList.size()-count < max_inventory
 
 func addObjectToInventory(object):
-	for i in range(objectList.size()):
+	for i in range(1, objectList.size()):
 		if objectList[i] == null:
 			objectList[i] = object
 			return
+	if objectList.size() == 0:
+		objectList.append(null)
 	objectList.append(object)
 
 ################## ACTION STATE ####################
