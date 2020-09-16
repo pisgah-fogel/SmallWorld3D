@@ -27,6 +27,11 @@ func update_placing():
 	offset.y = mControl.get_viewport_rect().size.y-600
 	offset.x = mControl.get_viewport_rect().size.x/2-500
 
+var mCallbacks = {}
+
+func registerCallback(callback, key):
+	mCallbacks[key] = callback
+
 func stop_reading():
 	clear_choices()
 	is_reading = false
@@ -125,6 +130,11 @@ func setVariables(choice):
 	if "set" in choice:
 		for v in choice["set"]:
 			variables[v] = choice["set"][v]
+	if "callback" in choice:
+		if choice["callback"] in mCallbacks:
+			mCallbacks[choice["callback"]].call_func()
+		else:
+			print("Error: Dialogs.gd: No callback ", choice["callback"], " found.")
 
 func _process(delta):
 	if apparition:

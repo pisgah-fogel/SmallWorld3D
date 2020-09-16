@@ -117,14 +117,14 @@ func speak():
 				"question":true,
 				"text":"reBonjour,\nqu'est ce que je peux faire pour toi ?",
 				"options":[
-					{"text":"[Vendre]", "set":{"answer":1}},
+					{"text":"[Acheter]", "set":{"answer":1}, "callback":"market"},
 					{"text":"Just papoter...", "set":{"answer":2}},
 					{"text":"Heu pardon", "set":{"answer":3}}
 					]
 			},
 			{
 				"check":{"FirstTime":true, "answer":1},
-				"text":"Desole je n'ai pas d'argent,\nReviens me voir plus tard"
+				"text":"N'hesite pas si tu veux m'acheter quelque chose..."
 			},
 			{
 				"check":{"FirstTime":true, "answer":2},
@@ -135,8 +135,12 @@ func speak():
 				"text":"Ciao, a plus tard !"
 			}
 		]
+	mDialogs.registerCallback(funcref(self, "_DialogMarketOpen"), "market")
 	mDialogs.connect("tree_exiting", self, "_DialogEnded")
 	mDialogs._popup()
+
+func _DialogMarketOpen():
+	print("Trex have to open it's market") # TODO
 
 func _DialogEnded():
 	mState = State.IDLE
