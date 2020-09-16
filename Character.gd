@@ -69,13 +69,36 @@ const DropPlacement = preload("res://DropPlacement.tscn")
 const Drop = preload("res://Drop.tscn")
 var mDropPlacement = null
 var dropping_col_count = 0
+var toBeDropped = null
+const BlueGhost = preload("res://BlueGhost.tres")
+const RedGhost = preload("res://RedGhost.tres")
 # This is a state inside MOVING state
 func startDopping():
 	is_dropping = true
 	dropping_col_count = 0
+	
+	# TODO: enable dropping more things
+	toBeDropped = Drop.instance()
+	var object = Item.new()
+	object.id = randi()%20
+	object.name = Item._name[object.id]
+	object.data["quality"] = randi()%3;
+	toBeDropped.setItem(object)
+	
 	if not mDropPlacement:
 		mDropPlacement = DropPlacement.instance()
 		# TODO: set size according to drop object size
+		var dropShape = toBeDropped.get_node("CollisionShape")
+		if not dropShape:
+			dropShape = toBeDropped.get_node("Area/CollisionShape")
+		if dropShape:
+			mDropPlacement.get_node("CollisionShape").shape = dropShape.shape
+			var ptr = mDropPlacement.get_node("MeshInstance")
+			ptr.mesh = toBeDropped.get_node("present/Cube").mesh
+			ptr.set_surface_material(0, BlueGhost)
+		else:
+			print("Error: cannot find the collision shape of the object to be dropped")
+
 		mDropPlacement.connect("body_entered", self, "dropping_body_entered")
 		mDropPlacement.connect("body_exited", self, "dropping_body_exited")
 		mMesh.add_child(mDropPlacement)
@@ -84,13 +107,13 @@ func canDropObject():
 	return is_dropping and mDropPlacement and dropping_col_count == 0
 
 func dropping_body_entered(body):
-	mDropPlacement.get_node("MeshInstance").get_surface_material(0).albedo_color = Color(1.0, 0.0, 0.0, 0.2)
+	mDropPlacement.get_node("MeshInstance").set_surface_material(0, RedGhost)
 	dropping_col_count += 1
 
 func dropping_body_exited(body):
 	dropping_col_count -= 1
 	if dropping_col_count == 0:
-		mDropPlacement.get_node("MeshInstance").get_surface_material(0).albedo_color = Color(0.0, 1.0, 1.0, 0.2)
+		mDropPlacement.get_node("MeshInstance").set_surface_material(0, BlueGhost)
 
 func stopDopping():
 	is_dropping = false
@@ -111,15 +134,11 @@ func _unhandled_key_input(event):
 				start_inventory()
 			elif event.is_action_pressed("ui_cheat"):
 				if is_dropping:
-					if canDropObject():
-						var gift = Drop.instance()
-						var object = Item.new()
-						object.id = randi()%20
-						object.name = Item._name[object.id]
-						object.data["quality"] = randi()%3;
-						get_parent().add_child(gift)
-						gift.setItem(object)
-						gift.global_transform.origin = mDropPlacement.get_node("MeshInstance").global_transform.origin
+					if canDropObject() and toBeDropped:
+						get_parent().add_child(toBeDropped)
+						toBeDropped.global_transform.origin = mDropPlacement.get_node("MeshInstance").global_transform.origin
+					elif toBeDropped:
+						toBeDropped.queue_free() # abort drop and free object
 					stopDopping()
 				else:
 					startDopping()

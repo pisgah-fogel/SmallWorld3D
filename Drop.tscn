@@ -5,7 +5,7 @@
 [ext_resource path="res://gfx/present.glb" type="PackedScene" id=3]
 
 [sub_resource type="BoxShape" id=1]
-extents = Vector3( 0.313303, 0.267093, 0.307544 )
+extents = Vector3( 0.313303, 0.267093, 0.317335 )
 
 [node name="Drop" type="Spatial"]
 script = ExtResource( 1 )

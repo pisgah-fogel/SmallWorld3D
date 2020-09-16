@@ -4,11 +4,12 @@ var active = false
 var mItem = null setget setItem
 
 func _ready():
-	var Item = load("res://Item.gd")
-	var item = Item.new()
-	item.id = Item._id.ID_FISHINGROT
-	item.name = Item._name[item.id]
-	setItem(item)
+	if not mItem:
+		var Item = load("res://Item.gd")
+		var item = Item.new()
+		item.id = Item._id.ID_FISHINGROT
+		item.name = Item._name[item.id]
+		setItem(item)
 	
 func setItem(item):
 	mItem = item
