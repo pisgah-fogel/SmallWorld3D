@@ -75,6 +75,7 @@ func startDopping():
 	dropping_col_count = 0
 	if not mDropPlacement:
 		mDropPlacement = DropPlacement.instance()
+		# TODO: set size according to drop object size
 		mDropPlacement.connect("body_entered", self, "dropping_body_entered")
 		mDropPlacement.connect("body_exited", self, "dropping_body_exited")
 		mMesh.add_child(mDropPlacement)
@@ -83,10 +84,13 @@ func canDropObject():
 	return is_dropping and mDropPlacement and dropping_col_count == 0
 
 func dropping_body_entered(body):
+	mDropPlacement.get_node("MeshInstance").get_surface_material(0).albedo_color = Color(1.0, 0.0, 0.0, 0.2)
 	dropping_col_count += 1
 
 func dropping_body_exited(body):
 	dropping_col_count -= 1
+	if dropping_col_count == 0:
+		mDropPlacement.get_node("MeshInstance").get_surface_material(0).albedo_color = Color(0.0, 1.0, 1.0, 0.2)
 
 func stopDopping():
 	is_dropping = false

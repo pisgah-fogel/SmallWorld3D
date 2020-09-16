@@ -7,7 +7,7 @@ extents = Vector3( 0.681218, 0.586101, 0.587382 )
 
 [sub_resource type="SpatialMaterial" id=3]
 flags_transparent = true
-albedo_color = Color( 0.152941, 1, 1, 0.188235 )
+albedo_color = Color( 0, 1, 1, 0.188235 )
 
 [node name="DropPlacement" type="Area"]
 collision_layer = 0
