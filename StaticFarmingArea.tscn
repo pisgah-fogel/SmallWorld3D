@@ -1,0 +1,30 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://gfx/bigPotatoPlant.glb" type="PackedScene" id=1]
+[ext_resource path="res://gfx/farmingArea.glb" type="PackedScene" id=2]
+[ext_resource path="res://gradientMaterial.tres" type="Material" id=3]
+
+[sub_resource type="BoxShape" id=1]
+extents = Vector3( 1.16313, 0.498605, 1.06052 )
+
+[node name="StaticFarmingArea" type="StaticBody"]
+
+[node name="CollisionShape" type="CollisionShape" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00345674, 0.591764, 0.639491 )
+shape = SubResource( 1 )
+
+[node name="farmingArea" parent="." instance=ExtResource( 2 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.337377, -6.08631 )
+
+[node name="FarminArea" parent="farmingArea" index="0"]
+material/0 = ExtResource( 3 )
+
+[node name="bigPotatoPlant" parent="." instance=ExtResource( 1 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.133941, 0.417028, -6.21152 )
+
+[node name="BigPotatoPlant" parent="bigPotatoPlant" index="0"]
+material/0 = ExtResource( 3 )
+
+[editable path="farmingArea"]
+
+[editable path="bigPotatoPlant"]

@@ -66,32 +66,37 @@ func _on_Timer_timeout():
 
 var is_dropping: bool = false
 const DropPlacement = preload("res://DropPlacement.tscn")
-const Drop = preload("res://Drop.tscn")
 var mDropPlacement = null
 var dropping_col_count = 0
 var toBeDropped = null
 const BlueGhost = preload("res://BlueGhost.tres")
 const RedGhost = preload("res://RedGhost.tres")
 # This is a state inside MOVING state
-func startDopping():
+func startDoppingPresent():
 	is_dropping = true
 	dropping_col_count = 0
 	# TODO: enable dropping more things
-	toBeDropped = Drop.instance()
-	var item = Item.new()
-	item.randomItem()
-	toBeDropped.setItem(item)
+	assert (toBeDropped != null)
 	
 	if not mDropPlacement:
 		mDropPlacement = DropPlacement.instance()
-		# TODO: set size according to drop object size
+		
+		# TODO: add position offset according to objets' size
+		#mDropPlacement.transform.origin = mMesh.transform.origin + Vector3(0, 0, 4)
+		
+		# TODO: Add rotation objects
+		# TODO: Snap to ????
+		
 		var dropShape = toBeDropped.get_node("CollisionShape")
 		if not dropShape:
 			dropShape = toBeDropped.get_node("Area/CollisionShape")
 		if dropShape:
 			mDropPlacement.get_node("CollisionShape").shape = dropShape.shape
 			var ptr = mDropPlacement.get_node("MeshInstance")
-			ptr.mesh = toBeDropped.get_node("present/Cube").mesh
+			var buff = toBeDropped.get_node("present/Cube")
+			if not buff:
+				buff = toBeDropped.get_node("farmingArea/FarminArea")
+			ptr.mesh = buff.mesh
 			ptr.set_surface_material(0, BlueGhost)
 		else:
 			print("Error: cannot find the collision shape of the object to be dropped")
@@ -118,13 +123,31 @@ func stopDopping():
 	if mDropPlacement:
 		mDropPlacement.queue_free()
 		mDropPlacement = null
+	toBeDropped = null
 
+const Drop = preload("res://Drop.tscn")
+const StaticFarmingArea = preload("res://StaticFarmingArea.tscn")
 func _unhandled_key_input(event):
 	match mState:
 		State.MOVE:
 			if event.is_action_pressed("ui_action"):
-				if canUseFishingRot():
+				if is_dropping:
+					if canDropObject() and toBeDropped:
+						# Place toBeDropped on map
+						# TODO: add dropped objects to a list that we save...
+						get_parent().add_child(toBeDropped)
+						toBeDropped.global_transform.origin = mDropPlacement.get_node("MeshInstance").global_transform.origin
+						# TODO: add rotation or snap ???
+			
+					stopDopping()
+				elif canUseFishingRot():
 					start_fishing()
+				elif objectList.size() > 0 and objectList[0] != null and Item.canDrop(objectList[0]):
+					if toBeDropped == null:
+						toBeDropped = StaticFarmingArea.instance()
+						# TODO: instanciate instance according to object type
+						objectList[0] = null # TODO: Find a safer way to do it
+					startDoppingPresent()
 				else:
 					start_action()
 			elif event.is_action_pressed("ui_inventory"):
@@ -134,12 +157,15 @@ func _unhandled_key_input(event):
 					if canDropObject() and toBeDropped:
 						get_parent().add_child(toBeDropped)
 						toBeDropped.global_transform.origin = mDropPlacement.get_node("MeshInstance").global_transform.origin
-					elif toBeDropped:
-						toBeDropped.queue_free() # abort drop and free object
 					stopDopping()
 				else:
-					startDopping()
-				mWallet.money += 10
+					if toBeDropped == null:
+						toBeDropped = Drop.instance()
+						var item = Item.new()
+						item.randomItem()
+						toBeDropped.setItem(item)
+					startDoppingPresent()
+				mWallet.money += 500
 			else:
 				event_move(event)
 		State.ACTION:
@@ -152,7 +178,7 @@ func _unhandled_key_input(event):
 
 ##################### FISHING  ########################
 func canUseFishingRot():
-	return objectList.size() > 0 and objectList[0] != null and objectList[0].id == Item._id.ID_FISHINGROT
+	return objectList.size() > 0 and objectList[0] != null and Item.canGoFishingWith(objectList[0])
 
 func equipeFishingRot():
 	if mFishingRot == null:

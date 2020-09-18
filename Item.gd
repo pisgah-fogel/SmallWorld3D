@@ -23,7 +23,8 @@ const _id = {
 	ID_SUNFLOWER = 17,
 	ID_STRAWBERRY = 18,
 	ID_FISHINGROT = 19,
-	ID_GARDEN = 20
+	ID_GARDEN = 20,
+	ID_PRESENT = 21
 }
 
 const _name = [
@@ -47,7 +48,8 @@ const _name = [
 	"Sunflower",
 	"Strawberry",
 	"FishingRot",
-	"Garden"
+	"Garden",
+	"Present"
 ]
 
 export var id: int = 0
@@ -58,3 +60,9 @@ func randomItem():
 	self.id = randi()%21
 	self.name =_name[self.id]
 	self.data["quality"] = randi()%3
+
+static func canGoFishingWith(item):
+	return item.id == _id.ID_FISHINGROT
+
+static func canDrop(item):
+	return item.id == _id.ID_GARDEN or item.id == _id.ID_PRESENT
