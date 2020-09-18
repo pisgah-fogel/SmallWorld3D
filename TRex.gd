@@ -152,6 +152,12 @@ func _DialogMarketOpen():
 		mMarketCanvas.setUserWallet(mCharacter.mWallet)
 		mMarketCanvas.connect("userBought", mCharacter, "receiveObject")
 	mMarketCanvas.connect("tree_exited", self, "_marketClosed")
+	var tmp = Item.new()
+	tmp.id = Item._id.ID_GARDEN
+	tmp.name = Item._name[tmp.id]
+	mMarketCanvas.mItemsTosell.append([tmp, 500])
+	mMarketCanvas.addRandomItem()
+	mMarketCanvas.addRandomItem()
 	add_child(mMarketCanvas)
 
 func _marketClosed():

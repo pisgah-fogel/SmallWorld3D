@@ -32,7 +32,7 @@ func _ready():
 		addRandomItem()
 		addRandomItem()
 		addRandomItem()
-		update_display()
+	update_display()
 
 const Node2DItem = preload("res://Node2DItem.tscn")
 var listChilds = []
