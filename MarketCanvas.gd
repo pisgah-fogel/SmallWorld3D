@@ -15,8 +15,7 @@ var mItemsTosell = []
 
 func addRandomItem():
 	var buff = Item.new()
-	buff.id = randi()%20
-	buff.name = Item._name[buff.id]
+	buff.randomItem()
 	
 	var prize = randi()%80 + 20
 	

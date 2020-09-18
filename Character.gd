@@ -76,14 +76,11 @@ const RedGhost = preload("res://RedGhost.tres")
 func startDopping():
 	is_dropping = true
 	dropping_col_count = 0
-	
 	# TODO: enable dropping more things
 	toBeDropped = Drop.instance()
-	var object = Item.new()
-	object.id = randi()%20
-	object.name = Item._name[object.id]
-	object.data["quality"] = randi()%3;
-	toBeDropped.setItem(object)
+	var item = Item.new()
+	item.randomItem()
+	toBeDropped.setItem(item)
 	
 	if not mDropPlacement:
 		mDropPlacement = DropPlacement.instance()

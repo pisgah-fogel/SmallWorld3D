@@ -22,7 +22,8 @@ const _id = {
 	ID_GRAPE = 16,
 	ID_SUNFLOWER = 17,
 	ID_STRAWBERRY = 18,
-	ID_FISHINGROT = 19
+	ID_FISHINGROT = 19,
+	ID_GARDEN = 20
 }
 
 const _name = [
@@ -45,9 +46,15 @@ const _name = [
 	"Grape",
 	"Sunflower",
 	"Strawberry",
-	"FishingRot"
+	"FishingRot",
+	"Garden"
 ]
 
 export var id: int = 0
 export var name: String = ''
 export var data: Dictionary = {}
+
+func randomItem():
+	self.id = randi()%21
+	self.name =_name[self.id]
+	self.data["quality"] = randi()%3
