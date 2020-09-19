@@ -61,12 +61,13 @@ func update_display():
 var selection = null
 func _input(event):
 	if event.is_action_pressed("ui_action") or event.is_action_pressed("ui_cancel") or event.is_action_pressed("ui_inventory"):
+		Input.set_mouse_mode(Input.MOUSE_MODE_HIDDEN)
 		self.queue_free()
 	if event is InputEventMouseButton:
 		if event.button_index == BUTTON_LEFT and event.pressed:
 			if selection != null:
 				# TODO check if inventory is full
-				if mUserWallet.money > selection[1]:
+				if mUserWallet.money >= selection[1]:
 					mUserWallet.money -= selection[1]
 					mMoneyLabel.text = str(mUserWallet.money)
 					emit_signal("userBought", selection[0], self)
