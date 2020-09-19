@@ -1,12 +1,11 @@
 """
 This node saves all it's childs
 If the player add something on the map, add it as a child of this node.
-
-# TODO make this node dependent to the current scene
-
 """
 
 extends Node
+
+export(int) var unique_id = 1
 
 var child_list = []
 func loopListChild(node):
@@ -17,11 +16,11 @@ func loopListChild(node):
 func save(save_game: Resource):
 	child_list.clear()
 	loopListChild(self)
-	save_game.data["CharDrops_list_1"] = child_list
+	save_game.data["CharDrops_list_"+str(unique_id)] = child_list
 
 func load(save_game: Resource):
-	if "CharDrops_list_1" in save_game.data:
-		child_list = save_game.data["CharDrops_list_1"]
+	if "CharDrops_list_"+str(unique_id) in save_game.data:
+		child_list = save_game.data["CharDrops_list_"+str(unique_id)]
 		var gameSaver = get_tree().get_root().get_node("TestScene/GameSaver")
 		for child in child_list:
 			var tmp = load(child[0])

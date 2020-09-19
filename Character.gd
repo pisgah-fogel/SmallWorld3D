@@ -134,11 +134,14 @@ func _unhandled_key_input(event):
 				if is_dropping:
 					if canDropObject() and toBeDropped:
 						# Place toBeDropped on map
-						# TODO: add dropped objects to a list that we save...
-						get_parent().get_node("CharDrops").add_child(toBeDropped)
-						toBeDropped.global_transform.origin = mDropPlacement.get_node("MeshInstance").global_transform.origin
-						if toBeDropped.has_method("makeUnique"):
-							toBeDropped.makeUnique()
+						var buff = get_parent().mScene.get_node("CharDrops")
+						if buff:
+							buff.add_child(toBeDropped)
+							toBeDropped.global_transform.origin = mDropPlacement.get_node("MeshInstance").global_transform.origin
+							if toBeDropped.has_method("makeUnique"):
+								toBeDropped.makeUnique()
+						else:
+							get_tree().get_root().get_node("TestScene").notify("You can't place stuff here")
 						# TODO: add rotation or snap ???
 			
 					stopDopping()

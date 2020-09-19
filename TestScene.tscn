@@ -1,17 +1,16 @@
-[gd_scene load_steps=10 format=2]
+[gd_scene load_steps=9 format=2]
 
 [ext_resource path="res://CuteFont.tres" type="DynamicFont" id=1]
 [ext_resource path="res://gfx/Robot.glb" type="PackedScene" id=2]
 [ext_resource path="res://Character.gd" type="Script" id=3]
 [ext_resource path="res://NotificationsCanvas.gd" type="Script" id=4]
-[ext_resource path="res://CharDrops.gd" type="Script" id=5]
 [ext_resource path="res://save/GameSaver.tscn" type="PackedScene" id=8]
 [ext_resource path="res://TestScene.gd" type="Script" id=9]
 
 [sub_resource type="ShaderMaterial" id=1]
 
 [sub_resource type="BoxShape" id=2]
-extents = Vector3( 0.406152, 0.838105, 0.292586 )
+extents = Vector3( 0.449095, 0.838105, 0.412015 )
 
 [node name="TestScene" type="Spatial" groups=[
 "save",
@@ -57,7 +56,7 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.0167343, 0 )
 transform = Transform( 1, 0, 0, 0, 0.837089, 0.547067, 0, -0.547067, 0.837089, 0.85197, 6.45402, 9.56242 )
 
 [node name="CollisionShape" type="CollisionShape" parent="Character"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0074234, 0.858021, 0.0912843 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.043498, 0.858021, 0.0240384 )
 shape = SubResource( 2 )
 
 [node name="Timer" type="Timer" parent="Character"]
@@ -91,10 +90,5 @@ __meta__ = {
 }
 
 [node name="Timer" type="Timer" parent="NotificationsCanvas"]
-
-[node name="CharDrops" type="Node" parent="." groups=[
-"save",
-]]
-script = ExtResource( 5 )
 [connection signal="timeout" from="Character/Timer" to="Character" method="_on_Timer_timeout"]
 [connection signal="timeout" from="NotificationsCanvas/Timer" to="NotificationsCanvas" method="_on_Timer_timeout"]

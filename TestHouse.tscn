@@ -1,8 +1,9 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://TestHouse.gd" type="Script" id=1]
 [ext_resource path="res://gfx/TestHouse.glb" type="PackedScene" id=2]
 [ext_resource path="res://StaticChest.tscn" type="PackedScene" id=3]
+[ext_resource path="res://CharDrops.tscn" type="PackedScene" id=4]
 
 [sub_resource type="BoxShape" id=1]
 extents = Vector3( 12.6743, 0.533366, 10.7391 )
@@ -15,6 +16,9 @@ extents = Vector3( 1, 1.93297, 1 )
 ]]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0337918, 0.00718546, 0.0882404 )
 script = ExtResource( 1 )
+
+[node name="CharDrops" parent="." instance=ExtResource( 4 )]
+unique_id = 2
 
 [node name="TestHouse" parent="." instance=ExtResource( 2 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -1.37998, -0.378789, -3.23613 )
@@ -48,7 +52,7 @@ unique_chest_id = 2
 [node name="StaticBody2" type="StaticBody" parent="."]
 
 [node name="CollisionPolygon" type="CollisionPolygon" parent="StaticBody2"]
-transform = Transform( 1, 0, 0, 0, -1.62921e-07, -1, 0, 1, -1.62921e-07, 1.63723, 0, -18.5433 )
+transform = Transform( 1, 0, 0, 0, -1.62921e-07, -1, 0, 1, -1.62921e-07, 1.68502, 0, -18.5556 )
 depth = 10.0
-polygon = PoolVector2Array( -15.5577, 11.7891, -2.84261, 26.6826, 2.48057, 19.4015, -0.371514, 19.5571, -0.503996, 22.3772, -2.46468, 22.3445, -2.8895, 19.5669, -7.43175, 19.4035, -7.72586, 16.6585, -5.63446, 16.3318, -5.53642, 11.7241, 2.44792, 11.6557, 2.50806, 19.1746, 6.49362, 19.2136, 6.98266, 9.38836 )
+polygon = PoolVector2Array( -15.5577, 11.7891, -2.84261, 26.6826, 1.81746, 19.0464, -1.04005, 19.0535, -0.93906, 22.3451, -2.46468, 22.3445, -2.45684, 19.0764, -7.19945, 19.0747, -7.26763, 16.6586, -5.2777, 16.6717, -5.28822, 11.9203, 1.84525, 11.9613, 1.81038, 19.0393, 6.49362, 19.2136, 6.13688, 9.5647 )
 [connection signal="body_entered" from="TeleportBack" to="." method="_on_TeleportBack_body_entered"]

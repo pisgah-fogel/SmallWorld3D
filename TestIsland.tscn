@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=2]
+[gd_scene load_steps=21 format=2]
 
 [ext_resource path="res://StaticShop.tscn" type="PackedScene" id=1]
 [ext_resource path="res://StaticTree.tscn" type="PackedScene" id=2]
@@ -10,6 +10,7 @@
 [ext_resource path="res://gfx/Trex.glb" type="PackedScene" id=8]
 [ext_resource path="res://TRex.gd" type="Script" id=9]
 [ext_resource path="res://gfx/Dirt.glb" type="PackedScene" id=10]
+[ext_resource path="res://CharDrops.tscn" type="PackedScene" id=11]
 [ext_resource path="res://StaticShaderLever.tscn" type="PackedScene" id=12]
 [ext_resource path="res://gradientMaterial.tres" type="Material" id=13]
 [ext_resource path="res://TestIsland.gd" type="Script" id=14]
@@ -166,6 +167,8 @@ shaderPath = "res://Aberation.shader"
 [node name="StaticShaderLever4" parent="Levers" instance=ExtResource( 12 )]
 transform = Transform( 0.016318, 0, -0.999867, 0, 1, 0, 0.999867, 0, 0.016318, -13.2843, 0.29073, -21.1137 )
 shaderPath = "res://Cartoon.shader"
+
+[node name="CharDrops" parent="." instance=ExtResource( 11 )]
 [connection signal="timeout" from="TRex/Timer" to="TRex" method="_on_Timer_timeout"]
 [connection signal="body_entered" from="TRex/TalkArea" to="TRex" method="_on_TalkArea_body_entered"]
 
