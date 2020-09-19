@@ -1,6 +1,9 @@
 """
 This node saves all it's childs
 If the player add something on the map, add it as a child of this node.
+
+# TODO make this node dependent to the current scene
+
 """
 
 extends Node

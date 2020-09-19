@@ -32,6 +32,7 @@ func _ready():
 		addRandomItem()
 		addRandomItem()
 		addRandomItem()
+	update_placing()
 	update_display()
 
 const Node2DItem = preload("res://Node2DItem.tscn")
@@ -93,7 +94,7 @@ func canRemoveObject(object):
 	pass
 
 func update_placing():
-	offset.y = mControl.get_viewport_rect().size.y-600
+	offset.y = 1.1*mControl.get_viewport_rect().size.y-600
 	offset.x = mControl.get_viewport_rect().size.x/2-500
 
 func _size_changed():
