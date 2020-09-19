@@ -10,7 +10,6 @@ func loopListChild(node):
     for N in node.get_children():
 		# TODO save rotation when rotating drops will be implemented
         child_list.append([N.filename, N.transform.origin, N.unique_id])
-        print("Drop saved ["+N.get_name()+"]")
 
 func save(save_game: Resource):
 	child_list.clear()
@@ -20,6 +19,7 @@ func save(save_game: Resource):
 func load(save_game: Resource):
 	if "CharDrops_list_1" in save_game.data:
 		child_list = save_game.data["CharDrops_list_1"]
+		var gameSaver = get_tree().get_root().get_node("TestScene/GameSaver")
 		for child in child_list:
 			var tmp = load(child[0])
 			if tmp:
@@ -27,6 +27,6 @@ func load(save_game: Resource):
 				buffer.transform.origin = child[1]
 				buffer.unique_id = child[2]
 				add_child(buffer)
-				print("CharDrops: ", child, " Loaded")
+				gameSaver.restoreDatas(buffer)
 			else:
 				print("Error: CharDrops: Failed to load ", child)
