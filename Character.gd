@@ -137,6 +137,8 @@ func _unhandled_key_input(event):
 						# TODO: add dropped objects to a list that we save...
 						get_parent().get_node("CharDrops").add_child(toBeDropped)
 						toBeDropped.global_transform.origin = mDropPlacement.get_node("MeshInstance").global_transform.origin
+						if toBeDropped.has_method("makeUnique"):
+							toBeDropped.makeUnique()
 						# TODO: add rotation or snap ???
 			
 					stopDopping()

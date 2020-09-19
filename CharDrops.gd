@@ -9,7 +9,7 @@ var child_list = []
 func loopListChild(node):
     for N in node.get_children():
 		# TODO save rotation when rotating drops will be implemented
-        child_list.append([N.filename, N.transform.origin])
+        child_list.append([N.filename, N.transform.origin, N.unique_id])
         print("Drop saved ["+N.get_name()+"]")
 
 func save(save_game: Resource):
@@ -25,6 +25,7 @@ func load(save_game: Resource):
 			if tmp:
 				var buffer = tmp.instance()
 				buffer.transform.origin = child[1]
+				buffer.unique_id = child[2]
 				add_child(buffer)
 				print("CharDrops: ", child, " Loaded")
 			else:
