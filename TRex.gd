@@ -155,9 +155,29 @@ func _DialogMarketOpen():
 	var tmp = Item.new()
 	tmp.id = Item._id.ID_GARDEN
 	tmp.name = Item._name[tmp.id]
-	mMarketCanvas.mItemsTosell.append([tmp, 500])
-	mMarketCanvas.addRandomItem()
-	mMarketCanvas.addRandomItem()
+	mMarketCanvas.mItemsTosell.append([tmp, 250])
+	
+	tmp = Item.new()
+	tmp.id = Item._id.ID_SEED_1
+	tmp.name = Item._name[tmp.id]
+	mMarketCanvas.mItemsTosell.append([tmp, 7])
+	
+	tmp = Item.new()
+	tmp.id = Item._id.ID_SEED_2
+	tmp.name = Item._name[tmp.id]
+	mMarketCanvas.mItemsTosell.append([tmp, 7])
+	
+	tmp = Item.new()
+	tmp.id = Item._id.ID_SEED_3
+	tmp.name = Item._name[tmp.id]
+	mMarketCanvas.mItemsTosell.append([tmp, 7])
+	
+	tmp = Item.new()
+	tmp.id = Item._id.ID_SEED_4
+	tmp.name = Item._name[tmp.id]
+	mMarketCanvas.mItemsTosell.append([tmp, 7])
+	
+	#mMarketCanvas.addRandomItem()
 	add_child(mMarketCanvas)
 
 func _marketClosed():

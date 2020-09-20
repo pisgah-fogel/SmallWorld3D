@@ -15,13 +15,13 @@ var mState = State.ENTER
 export(int) var spawnDepth = -2
 export(int) var mDepth = 0
 
-export(int) var default_speed = 2
+export(int) var default_speed = 2 # TODO: 1.5 does not work; fishes never finish enterring
 export(int) var speed = 2
-export(int) var tasting_propability = 60
+export(int) var tasting_propability = 70
 export(float) var distance_eating = 0.7
 
-export(float) var timer_objectif = 1
-export(int) var bad_luck = 5
+export(float) var timer_objectif = 0.7
+export(int) var bad_luck = 20
 
 export(Rect2) var spawner_zone = Rect2(-23,-24,5,23+18) setget set_spawner
 

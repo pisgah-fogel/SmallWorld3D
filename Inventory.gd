@@ -40,13 +40,13 @@ func _ready():
 	mControl.modulate.a = 0.0
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 	Input.set_custom_mouse_cursor(hand_open, Input.CURSOR_ARROW, hand_offset)
-	update_mItems()
 	create_chest_background()
 	if mUserWallet != null:
 		mMoneyLabel.text = str(mUserWallet.money)
 	get_tree().get_root().connect("size_changed", self, "_size_changed")
 	reset_drafting_sprite()
 	update_placing()
+	update_mItems()
 
 func _process(delta):
 	if apparition:
@@ -205,9 +205,10 @@ func start_drag_sprite(pos):
 	if mChest and mChest.get("isShop"): # update shop
 		if mChest.total == 0:
 			mTotalLabel.text = ""
-		else:
+		elif mChest.total > 0:
 			mTotalLabel.text = "+ " + str(mChest.total)
-
+		else:
+			mTotalLabel.text = "- " + str(abs(mChest.total))
 ###################################### END DRAG #########################################
 
 func setItem(index:int, object):
@@ -274,5 +275,7 @@ func end_drag_sprite(pos):
 	if mChest and mChest.get("isShop"): # update shop
 		if mChest.total == 0:
 			mTotalLabel.text = ""
-		else:
+		elif mChest.total > 0:
 			mTotalLabel.text = "+ " + str(mChest.total)
+		else:
+			mTotalLabel.text = "- " + str(abs(mChest.total))

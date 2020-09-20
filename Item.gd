@@ -35,10 +35,10 @@ const _name = [
 	"Red plant",
 	"Turtle",
 	"Blue Fish",
-	"seed",
-	"seed",
-	"seed",
-	"seed",
+	"Seed",
+	"Seed",
+	"Seed",
+	"Seed",
 	"Turnip",
 	"Green Melon",
 	"Yellow Melon",
@@ -66,3 +66,6 @@ static func canGoFishingWith(item):
 
 static func canDrop(item):
 	return item.id == _id.ID_GARDEN or item.id == _id.ID_PRESENT
+
+static func isSeed(item):
+	return item.id >= _id.ID_SEED_1 and item.id <= _id.ID_SEED_4

@@ -24,6 +24,25 @@ class Wallet:
 	var money:int = 0
 var mWallet = Wallet.new()
 
+func getTool():
+	"""
+	Return the item the player is holding (ID_VOID if nothing)
+	"""
+	if objectList.size():
+		if objectList[0]:
+			return objectList[0]
+	var tmp = Item.new()
+	tmp.id = Item._id.ID_VOID
+	return tmp
+
+func removeTool():
+	"""
+	Remove the item the player is currently holding
+	"""
+	if objectList.size():
+		objectList[0] = null
+		# TODO play sound
+
 func _ready():
 	var mActionCollision = ActionCollision.instance()
 	mCollisionShape = mActionCollision.get_node("CollisionShape")
@@ -320,12 +339,14 @@ func clear_null_inventory():
 
 func receiveObject(object, giver):
 	if haveSpareSpace():
-		giver.canRemoveObject(object)
+		if giver.has_method("canRemoveObject"):
+			giver.canRemoveObject(object)
 		addObjectToInventory(object)
 		get_tree().get_root().get_node("TestScene").notify(object.name+" received")
 	else:
 		# TODO handle inventory full
-		giver.canRemoveObject(object)
+		if giver.has_method("canRemoveObject"):
+			giver.canRemoveObject(object)
 		get_tree().get_root().get_node("TestScene").notify("Inventory is full")
 
 func haveSpareSpace():
