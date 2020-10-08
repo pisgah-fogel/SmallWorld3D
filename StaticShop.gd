@@ -38,7 +38,10 @@ var userWallet = null setget setUserWallet
 func setUserWallet(wallet):
 	print("Shop::setUserWallet")
 	userWallet = wallet
-	
+
+func canGetObject():
+	return total >= 0
+
 func getPrice(item_id:int):
 	if item_id >= 0 and item_id < prices.size():
 		return prices[item_id]

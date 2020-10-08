@@ -261,8 +261,11 @@ func end_drag_sprite(pos):
 	var ix:int = tmp.x
 	var iy:int = tmp.y
 	if is_inside_inventory(ix, iy, self): # valid coordinates ?
-		var pos_sel_bis = (ix-tileStart.x) + (iy-tileStart.y)*num_column
-		drop_in(self, pos_sel_bis)
+		if mChest and mChest.has_method("canGetObject") and not mChest.canGetObject():
+			abord_drop()
+		else:
+			var pos_sel_bis = (ix-tileStart.x) + (iy-tileStart.y)*num_column
+			drop_in(self, pos_sel_bis)
 	elif mChest != null and is_inside_inventory(ix, iy, mChest):
 		var pos_sel_bis = (ix-mChest.tileStart.x) + (iy-mChest.tileStart.y)*mChest.num_column
 		drop_in(mChest, pos_sel_bis)
