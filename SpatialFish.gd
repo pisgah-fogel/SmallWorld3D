@@ -102,9 +102,13 @@ func _on_FishView_body_entered(body):
 var food = null
 func _on_PredatorView_body_entered(body):
 	if mState == State.WANDER:
-		start_chasing()
 		food = body
+		food.connect("tree_exiting", self, "_baitDeleted")
+		start_chasing()
 
+func _baitDeleted():
+	food = null
+	start_wander()
 ######################## CHASING ########################
 
 func start_chasing():

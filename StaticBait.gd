@@ -5,13 +5,21 @@ signal baitEaten(fish)
 
 onready var mParticles = $Particles
 
-func baitEatenByFish(fish):
-	print("Bait eaten by fish")
-	emit_signal("baitEaten", fish)
+var isEaten = false
 
+# User was unlucky or too late, fish have eaten the bait
+func baitEatenByFish(fish):
+	if not isEaten:
+		isEaten = true
+		print("Bait eaten by fish")
+		emit_signal("baitEaten", fish)
+
+# User catched a fish
 func catchAFish(fish):
-	print("catchAFish")
-	emit_signal("fishCatched", fish)
+	if not isEaten:
+		isEaten = true
+		print("catchAFish")
+		emit_signal("fishCatched", fish)
 
 func tasting():
 	# TODO: play "taste" animation or VFX

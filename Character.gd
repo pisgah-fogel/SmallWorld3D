@@ -265,6 +265,7 @@ func _fishCatched(fish):
 	start_gotFish()
 
 func _baitEaten(fish):
+	# TODO pause or ignore next fishing input
 	print("Player's bait eaten, start move state again")
 	stop_fishing()
 
@@ -460,9 +461,9 @@ func teleport_if_falls():
 		self.translation = Vector3(0, 20, 0)
 
 func lerp_angle(from, to, weight):
-    return from + short_angle_dist(from, to) * weight
+	return from + short_angle_dist(from, to) * weight
 
 func short_angle_dist(from, to):
-    var max_angle = PI * 2
-    var difference = fmod(to - from, max_angle)
-    return fmod(2 * difference, max_angle) - difference
+	var max_angle = PI * 2
+	var difference = fmod(to - from, max_angle)
+	return fmod(2 * difference, max_angle) - difference
