@@ -51,6 +51,31 @@ func _ready():
 	mAnimationPlayer.playback_speed = 2
 	Input.set_mouse_mode(Input.MOUSE_MODE_HIDDEN)
 
+func changeState(newstate):
+	match mState:
+		State.MOVE:
+			exitMoveState()
+		State.ACTION:
+			exitActionState()
+		State.INVENTORY:
+			exitInventoryState()
+		State.FISHING:
+			exitFishingState()
+		State.GOTFISH:
+			exitGotFishState()
+	mState = newstate
+	match mState:
+		State.MOVE:
+			enterMoveState()
+		State.ACTION:
+			enterActionState()
+		State.INVENTORY:
+			enterInventoryState()
+		State.FISHING:
+			enterFishingState()
+		State.GOTFISH:
+			entergotfishState()
+
 func _physics_process(delta):
 	match mState:
 		State.MOVE:
@@ -74,7 +99,7 @@ func _end_animation(anim_name):
 		State.MOVE:
 			pass
 		State.ACTION:
-			end_action()
+			changeState(State.MOVE)
 
 func _on_Timer_timeout():
 	match mState:
@@ -83,15 +108,26 @@ func _on_Timer_timeout():
 		State.ACTION:
 			pass
 
+################################# DROP something ###############################
+# This can happen while we are in State.MOVE
+
 var is_dropping: bool = false
 const DropPlacement = preload("res://DropPlacement.tscn")
-var mDropPlacement = null
+var mDropPlacement = null # Ghosty version of the item we what to drop so we can check for the placement
 var dropping_col_count = 0
 var toBeDropped = null
 const BlueGhost = preload("res://BlueGhost.tres")
 const RedGhost = preload("res://RedGhost.tres")
 # This is a state inside MOVING state
-func startDoppingPresent():
+func startDoppingPresent(cheating: bool = false):
+	if not cheating:
+		instanciateToBeDropped()
+	else:
+		toBeDropped = Drop.instance()
+		var item = Item.new()
+		item.randomItem()
+		toBeDropped.setItem(item)
+	
 	is_dropping = true
 	dropping_col_count = 0
 	# TODO: enable dropping more things
@@ -106,11 +142,12 @@ func startDoppingPresent():
 		# TODO: Add rotation objects
 		# TODO: Snap to ????
 		
-		var dropShape = toBeDropped.get_node("CollisionShape")
-		if not dropShape:
-			dropShape = toBeDropped.get_node("Area/CollisionShape")
-		if dropShape:
-			mDropPlacement.get_node("CollisionShape").shape = dropShape.shape
+		# Make the drop placement shape matches the shape of the item we are trying to drop
+		var dropPlacementShape = toBeDropped.get_node("CollisionShape")
+		if not dropPlacementShape:
+			dropPlacementShape = toBeDropped.get_node("Area/CollisionShape")
+		if dropPlacementShape:
+			mDropPlacement.get_node("CollisionShape").shape = dropPlacementShape.shape
 			var ptr = mDropPlacement.get_node("MeshInstance")
 			var buff = toBeDropped.get_node("present/Cube")
 			if not buff:
@@ -125,18 +162,34 @@ func startDoppingPresent():
 		mMesh.add_child(mDropPlacement)
 
 func canDropObject():
-	return is_dropping and mDropPlacement and dropping_col_count == 0
+	"""
+	Returns true if we can drop the object (if we are in dropping state and there is no collision)
+	"""
+	return is_dropping and mDropPlacement and toBeDropped and dropping_col_count == 0
 
 func dropping_body_entered(body):
-	mDropPlacement.get_node("MeshInstance").set_surface_material(0, RedGhost)
+	"""
+	New collision detected, do not allow drop
+	"""
+	mDropPlacement.get_node("MeshInstance").set_surface_material(0, RedGhost) # Set color to red
 	dropping_col_count += 1
 
 func dropping_body_exited(body):
+	"""
+	Decrement the collision counter, if there is no more collision allow drop
+	"""
 	dropping_col_count -= 1
+	if dropping_col_count < 0:
+		dropping_col_count = 0 # Make sure the "dropping_body" does not spawn in a collision...
 	if dropping_col_count == 0:
-		mDropPlacement.get_node("MeshInstance").set_surface_material(0, BlueGhost)
+		mDropPlacement.get_node("MeshInstance").set_surface_material(0, BlueGhost) # Set color to Blue
 
-func stopDopping():
+func stopDropping(giveObjectBack: bool = false):
+	"""
+	Clears the dropping state
+	"""
+	if giveObjectBack:
+		pass # TODO: Give the object back
 	is_dropping = false
 	dropping_col_count = 0
 	if mDropPlacement:
@@ -146,48 +199,55 @@ func stopDopping():
 
 const Drop = preload("res://Drop.tscn")
 const StaticFarmingArea = preload("res://StaticFarmingArea.tscn")
+
+func dropSomethingIfPossible():
+	if canDropObject():
+		# Place toBeDropped on map
+		var buff = get_parent().mScene.get_node("CharDrops")
+		if buff:
+			buff.add_child(toBeDropped)
+			toBeDropped.global_transform.origin = mDropPlacement.get_node("MeshInstance").global_transform.origin
+			if toBeDropped.has_method("makeUnique"):
+				toBeDropped.makeUnique()
+			stopDropping()
+		else:
+			get_tree().get_root().get_node("TestScene").notify("You can't place stuff here")
+			stopDropping(true)
+		# TODO: add rotation or snap ???
+
+func canEnterDroppingWithoutCheating() -> bool:
+	"""
+	Returns true if the character has something in his hand and this object cann be dropped
+	"""
+	return objectList.size() > 0 and objectList[0] != null and Item.canDrop(objectList[0])
+
+func instanciateToBeDropped():
+	"""
+	Instanciate the object the player is holding so it can be dropped
+	"""
+	if toBeDropped == null:
+		toBeDropped = StaticFarmingArea.instance()
+		# TODO: instanciate objects to be dropped according to object type
+		objectList[0] = null # TODO: Find a safer way to do it
+
+######################### End of DROP
+
 func _unhandled_key_input(event):
 	match mState:
 		State.MOVE:
-			if event.is_action_pressed("ui_action"):
+			if event.is_action_pressed("ui_action"): # Fish, frop something or object specific action
 				if is_dropping:
-					if canDropObject() and toBeDropped:
-						# Place toBeDropped on map
-						var buff = get_parent().mScene.get_node("CharDrops")
-						if buff:
-							buff.add_child(toBeDropped)
-							toBeDropped.global_transform.origin = mDropPlacement.get_node("MeshInstance").global_transform.origin
-							if toBeDropped.has_method("makeUnique"):
-								toBeDropped.makeUnique()
-						else:
-							get_tree().get_root().get_node("TestScene").notify("You can't place stuff here")
-						# TODO: add rotation or snap ???
-			
-					stopDopping()
+					dropSomethingIfPossible()
 				elif canUseFishingRot():
-					start_fishing()
-				elif objectList.size() > 0 and objectList[0] != null and Item.canDrop(objectList[0]):
-					if toBeDropped == null:
-						toBeDropped = StaticFarmingArea.instance()
-						# TODO: instanciate instance according to object type
-						objectList[0] = null # TODO: Find a safer way to do it
+					changeState(State.FISHING)
+				elif canEnterDroppingWithoutCheating():
 					startDoppingPresent()
 				else:
-					start_action()
+					changeState(State.ACTION)
 			elif event.is_action_pressed("ui_inventory"):
-				start_inventory()
+				changeState(State.INVENTORY)
 			elif event.is_action_pressed("ui_cheat"):
-				if is_dropping:
-					if canDropObject() and toBeDropped:
-						get_parent().add_child(toBeDropped)
-						toBeDropped.global_transform.origin = mDropPlacement.get_node("MeshInstance").global_transform.origin
-					stopDopping()
-				else:
-					if toBeDropped == null:
-						toBeDropped = Drop.instance()
-						var item = Item.new()
-						item.randomItem()
-						toBeDropped.setItem(item)
+				if not is_dropping:
 					startDoppingPresent()
 				mWallet.money += 500
 			else:
@@ -196,7 +256,7 @@ func _unhandled_key_input(event):
 			pass
 		State.INVENTORY:
 			if event.is_action_pressed("ui_cancel") or event.is_action_pressed("ui_inventory"):
-				end_inventory()
+				changeState(State.MOVE)
 		State.FISHING:
 			event_fishing(event)
 
@@ -211,9 +271,7 @@ func equipeFishingRot():
 
 var mBait = null
 var mFishingRot = null
-func start_fishing():
-	mState = State.FISHING
-	reset_movements_and_picking()
+func enterFishingState():
 	equipeFishingRot() # Just to be sure
 	if mBait == null:
 		mBait = Bait.instance()
@@ -233,26 +291,25 @@ func state_fishing(delta):
 			var dir = (get_global_transform().origin - mBait.get_global_transform().origin).normalized()
 			mBait.global_translate(dir*bait_pulling_strength*delta)
 			if mBait.get_global_transform().origin.distance_to(get_global_transform().origin) < 1.5:
-				stop_fishing()
+				changeState(State.MOVE)
 		else:
-			mState = State.MOVE
+			changeState(State.MOVE)
 
 var bait_pulling_strength = 0
 func event_fishing(event):
 	if event.is_action_pressed("ui_cancel") or event.is_action_pressed("ui_inventory") or event.is_action_pressed("ui_right")\
 		or event.is_action_pressed("ui_left") or event.is_action_pressed("ui_up") or event.is_action_pressed("ui_down"):
-		stop_fishing()
+		changeState(State.MOVE)
 		
 	bait_pulling_strength = event.get_action_strength("ui_action")
 
-func stop_fishing():
+func exitFishingState():
 	if mBait:
 		mBait.queue_free()
 		mBait = null
 	if mFishingRot:
 		mFishingRot.queue_free()
 		mFishingRot = null
-	mState = State.MOVE
 
 var newFish = null
 func _fishCatched(fish):
@@ -262,17 +319,17 @@ func _fishCatched(fish):
 		mBait = null
 	newFish._show_yourself()
 	# TODO: rotate to be pretty for the player
-	start_gotFish()
+	changeState(State.GOTFISH);
 
 func _baitEaten(fish):
 	# TODO pause or ignore next fishing input
 	print("Player's bait eaten, start move state again")
-	stop_fishing()
+	changeState(State.MOVE)
 
 ###################### GOTFISH ########################
 
-func start_gotFish():
-	mState = State.GOTFISH
+func entergotfishState():
+	pass
 
 func state_gotFish(delta):
 	if newFish != null:
@@ -282,11 +339,11 @@ func state_gotFish(delta):
 		var trans = (targetGlobal - fishGlobal).normalized()
 		newFish.global_translate(trans*delta*5.0)
 		if Vector2(fishGlobal.x, fishGlobal.z).distance_to(Vector2(targetGlobal.x, targetGlobal.z)) < 1:
-			stop_gotFish()
+			changeState(State.MOVE)
 	else:
-		stop_gotFish()
+		changeState(State.MOVE)
 
-func stop_gotFish():
+func exitGotFishState():
 	if newFish != null:
 		print("Player catched ", newFish.mItem.name)
 		if haveSpareSpace():
@@ -296,15 +353,13 @@ func stop_gotFish():
 			# TODO handle full inventory
 		newFish.queue_free()
 		newFish = null
-	stop_fishing() #Free bait & start_move()
+	
 
 ################## INVENTORY STATE ####################
 const Inventory = preload("res://Inventory.tscn")
 var inventoryInstance = null
-func start_inventory():
+func enterInventoryState():
 	# TODO: play inventory animation
-	mState = State.INVENTORY
-	reset_movements_and_picking()
 	openInventory(null)
 
 func openInventory(chest):
@@ -320,8 +375,7 @@ func openInventory(chest):
 	inventoryInstance.setChest(chest)
 	add_child(inventoryInstance)
 
-func end_inventory():
-	mState = State.MOVE
+func exitInventoryState():
 	Input.set_mouse_mode(Input.MOUSE_MODE_HIDDEN)
 	if inventoryInstance != null:
 		if inventoryInstance.mChest != null:
@@ -330,8 +384,7 @@ func end_inventory():
 	equipeItem()
 
 func _on_chestOpenned(chest):
-	mState = State.INVENTORY
-	reset_movements_and_picking()
+	changeState(State.INVENTORY)
 	openInventory(chest)
 
 func clear_null_inventory():
@@ -368,18 +421,18 @@ func addObjectToInventory(object):
 
 ################## ACTION STATE ####################
 
-func start_action():
+func enterActionState():
 	mAnimationPlayer.play("DownTrack")
-	mState = State.ACTION
-	reset_movements_and_picking()
 	mCollisionShape.disabled =false
 	self.move_and_slide(Vector3.ZERO) # Update physic collisions
 
-func end_action():
-	mState = State.MOVE
+func exitActionState():
 	mCollisionShape.disabled = true
 
 ################## MOVE STATE ####################
+func enterMoveState():
+	pass
+
 var right_strength = 0.0
 var left_strength = 0.0
 var up_strength = 0.0
@@ -421,6 +474,11 @@ func state_move(delta):
 		buff.y = lerp_angle(buff.y, target_angle, 0.1)
 		mMesh.set_rotation(buff)
 		mAnimationPlayer.play("WalkTrack")
+
+func exitMoveState():
+	if is_dropping:
+		stopDropping(true)
+	reset_movements_and_picking()
 
 func reset_movements_and_picking():
 	velocity = Vector2(0, 0)
