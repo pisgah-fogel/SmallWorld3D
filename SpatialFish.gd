@@ -140,10 +140,10 @@ var bait_location : Vector3 = Vector3.ZERO
 func _on_PredatorView_body_entered(body):
 	if mState == State.WANDER:
 		body.connect("tree_exiting", self, "_on_bait_deleted")
-		self.connect("fishCaught", body, "_on_fish_caught")
-		self.connect("baitEaten", body, "_on_bait_eaten")
-		self.connect("beating", body, "_on_beating")
-		self.connect("tasting", body, "_on_tasting")
+		var _e = self.connect("fishCaught", body, "_on_fish_caught")
+		_e = self.connect("baitEaten", body, "_on_bait_eaten")
+		_e = self.connect("beating", body, "_on_beating")
+		_e = self.connect("tasting", body, "_on_tasting")
 		bait_location = body.to_global(Vector3(0, 0, 0))
 		changeState(State.CHASING)
 

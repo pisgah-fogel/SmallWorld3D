@@ -86,16 +86,7 @@ func _physics_process(delta):
 		State.ACTION:
 			pass # Wait for animation to finish
 
-func _process(delta):
-	match mState:
-		State.MOVE:
-			pass
-		State.ACTION:
-			pass
-		State.GOTFISH:
-			pass
-
-func _end_animation(anim_name):
+func _end_animation(_anim_name):
 	match mState:
 		State.MOVE:
 			pass
@@ -196,14 +187,14 @@ func canDropObject():
 	"""
 	return is_dropping and mDropPlacement and toBeDropped and dropping_col_count == 0
 
-func dropping_body_entered(body):
+func dropping_body_entered(_body):
 	"""
 	New collision detected, do not allow drop
 	"""
 	mDropPlacement.get_node("MeshInstance").set_surface_material(0, RedGhost) # Set color to red
 	dropping_col_count += 1
 
-func dropping_body_exited(body):
+func dropping_body_exited(_body):
 	"""
 	Decrement the collision counter, if there is no more collision allow drop
 	"""
@@ -317,8 +308,8 @@ func _on_fishCatched(fish : Fish):
 		mBait.queue_free()
 		mBait = null
 	# TODO: rotate to be pretty for the player
-	self.connect("translateFishToPlayer", fish, "_on_translateFishToPlayer")
-	fish.connect("translationDone", self, "_on_fish_translation_done")
+	var _e = self.connect("translateFishToPlayer", fish, "_on_translateFishToPlayer")
+	_e = fish.connect("translationDone", self, "_on_fish_translation_done")
 	changeState(State.GOTFISH)
 
 func _on_baitEaten(_fish : Fish):
@@ -416,7 +407,7 @@ func addObjectToInventory(object):
 func enterActionState():
 	mAnimationPlayer.play("DownTrack")
 	mCollisionShape.disabled =false
-	self.move_and_slide(Vector3.ZERO) # Update physic collisions
+	var _linear_velocity = self.move_and_slide(Vector3.ZERO) # Update physic collisions
 
 func exitActionState():
 	mCollisionShape.disabled = true
@@ -455,7 +446,7 @@ func event_move(event):
 
 func state_move(delta):
 	velocity = velocity.linear_interpolate(userControl.normalized() * speed * delta, 0.2)
-	self.move_and_slide(Vector3(velocity.x, -gravity, velocity.y))
+	var _linear_velocity = self.move_and_slide(Vector3(velocity.x, -gravity, velocity.y))
 	teleport_if_falls()
 	
 	if velocity.length() < 1:

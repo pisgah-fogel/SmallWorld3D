@@ -30,12 +30,11 @@ func _on_Timer_timeout():
 export(float) var gravity = -5
 var target = Vector3.ZERO
 export(float) var speed = 1.0
-func _physics_process(delta):
+func _physics_process(_delta):
 	if mState == State.WANDER:
 		var v = (target - self.global_transform.origin).normalized()
 		v.y = gravity
 		smoothLookAtTarget()
-		var slide_vec = move_and_slide(v*speed, Vector3(0.0, 1.0, 0.0), false, 4) # TODO: change by move_and_slide and handle the output
 		if is_on_wall():
 			count_coll += 1
 			# Turn to avoid colliding again
@@ -72,10 +71,10 @@ func _process(delta):
 		State.WANDER:
 			process_wander(delta)
 
-func process_idle(delta):
+func process_idle(_delta):
 	pass
 
-func process_wander(delta):
+func process_wander(_delta):
 	if self.global_transform.origin.distance_to(target) < 5.0:
 		pickUpNewRandTarget()
 
