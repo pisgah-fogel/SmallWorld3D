@@ -1,10 +1,11 @@
 extends KinematicBody
 
+class_name Character
+
 export var speed = 200
 export var gravity = 600
 export var max_inventory = 5*2
 export var fishing_distance = 5
-export (float) var high_caught_fish = 1
 var velocity = Vector2(0, 0)
 
 onready var mMesh = $Robot
@@ -92,7 +93,7 @@ func _process(delta):
 		State.ACTION:
 			pass
 		State.GOTFISH:
-			state_gotFish(delta)
+			pass
 
 func _end_animation(anim_name):
 	match mState:
@@ -107,6 +108,34 @@ func _on_Timer_timeout():
 			pass
 		State.ACTION:
 			pass
+
+func _unhandled_key_input(event):
+	match mState:
+		State.MOVE:
+			if event.is_action_pressed("ui_action"): # Fish, frop something or object specific action
+				if is_dropping:
+					dropSomethingIfPossible()
+				elif canUseFishingRot():
+					changeState(State.FISHING)
+				elif canEnterDroppingWithoutCheating():
+					startDoppingPresent()
+				else:
+					changeState(State.ACTION)
+			elif event.is_action_pressed("ui_inventory"):
+				changeState(State.INVENTORY)
+			elif event.is_action_pressed("ui_cheat"):
+				if not is_dropping:
+					startDoppingPresent()
+				mWallet.money += 500
+			else:
+				event_move(event)
+		State.ACTION:
+			pass
+		State.INVENTORY:
+			if event.is_action_pressed("ui_cancel") or event.is_action_pressed("ui_inventory"):
+				changeState(State.MOVE)
+		State.FISHING:
+			event_fishing(event)
 
 ################################# DROP something ###############################
 # This can happen while we are in State.MOVE
@@ -232,34 +261,6 @@ func instanciateToBeDropped():
 
 ######################### End of DROP
 
-func _unhandled_key_input(event):
-	match mState:
-		State.MOVE:
-			if event.is_action_pressed("ui_action"): # Fish, frop something or object specific action
-				if is_dropping:
-					dropSomethingIfPossible()
-				elif canUseFishingRot():
-					changeState(State.FISHING)
-				elif canEnterDroppingWithoutCheating():
-					startDoppingPresent()
-				else:
-					changeState(State.ACTION)
-			elif event.is_action_pressed("ui_inventory"):
-				changeState(State.INVENTORY)
-			elif event.is_action_pressed("ui_cheat"):
-				if not is_dropping:
-					startDoppingPresent()
-				mWallet.money += 500
-			else:
-				event_move(event)
-		State.ACTION:
-			pass
-		State.INVENTORY:
-			if event.is_action_pressed("ui_cancel") or event.is_action_pressed("ui_inventory"):
-				changeState(State.MOVE)
-		State.FISHING:
-			event_fishing(event)
-
 ##################### FISHING  ########################
 func canUseFishingRot():
 	return objectList.size() > 0 and objectList[0] != null and Item.canGoFishingWith(objectList[0])
@@ -279,8 +280,8 @@ func enterFishingState():
 		# Local movement (relative to the player)
 		mBait.translation = Vector3(fishing_distance*sin(mMesh.rotation.y), -1, fishing_distance*cos(mMesh.rotation.y))
 		
-		mBait.connect("fishCatched", self, "_fishCatched")
-		mBait.connect("baitEaten", self, "_baitEaten")
+		mBait.connect("fishCatched", self, "_on_fishCatched")
+		mBait.connect("baitEaten", self, "_on_baitEaten")
 		add_child(mBait)
 	mFishingRot.get_node("AnimationPlayer").play("SwingTrack")
 	
@@ -311,49 +312,40 @@ func exitFishingState():
 		mFishingRot.queue_free()
 		mFishingRot = null
 
-var newFish = null
-func _fishCatched(fish):
-	newFish = fish
+func _on_fishCatched(fish : Fish):
 	if mBait != null:
 		mBait.queue_free()
 		mBait = null
-	newFish._show_yourself()
 	# TODO: rotate to be pretty for the player
-	changeState(State.GOTFISH);
+	self.connect("translateFishToPlayer", fish, "_on_translateFishToPlayer")
+	fish.connect("translationDone", self, "_on_fish_translation_done")
+	changeState(State.GOTFISH)
 
-func _baitEaten(fish):
+func _on_baitEaten(_fish : Fish):
 	# TODO pause or ignore next fishing input
 	print("Player's bait eaten, start move state again")
 	changeState(State.MOVE)
 
 ###################### GOTFISH ########################
+signal translateFishToPlayer(player_position)
 
 func entergotfishState():
-	pass
+	print("Player: send signal to fish to show up")
+	emit_signal("translateFishToPlayer", mMesh.global_transform.origin)
 
-func state_gotFish(delta):
-	if newFish != null:
-		# ToDo: make the fish jump out of the water
-		var fishGlobal = newFish.global_transform.origin
-		var targetGlobal = mMesh.global_transform.origin + Vector3(0, high_caught_fish, 0)
-		var trans = (targetGlobal - fishGlobal).normalized()
-		newFish.global_translate(trans*delta*5.0)
-		if Vector2(fishGlobal.x, fishGlobal.z).distance_to(Vector2(targetGlobal.x, targetGlobal.z)) < 1:
-			changeState(State.MOVE)
+func _on_fish_translation_done(fish: Fish):
+	print("Player: fish translation done")
+	print("Player catched ", fish.mItem.name)
+	if haveSpareSpace():
+		addObjectToInventory(fish.mItem)
 	else:
-		changeState(State.MOVE)
+		print("Inventory is full")
+		# TODO handle full inventory
+		fish.queue_free()
+	changeState(State.MOVE)
 
 func exitGotFishState():
-	if newFish != null:
-		print("Player catched ", newFish.mItem.name)
-		if haveSpareSpace():
-			addObjectToInventory(newFish.mItem)
-		else:
-			print("Inventory is full")
-			# TODO handle full inventory
-		newFish.queue_free()
-		newFish = null
-	
+	pass
 
 ################## INVENTORY STATE ####################
 const Inventory = preload("res://Inventory.tscn")

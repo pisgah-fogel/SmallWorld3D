@@ -9,9 +9,9 @@ export(int) var unique_id = 1
 
 var child_list = []
 func loopListChild(node):
-    for N in node.get_children():
+	for N in node.get_children():
 		# TODO save rotation when rotating drops will be implemented
-        child_list.append([N.filename, N.transform.origin, N.unique_id])
+		child_list.append([N.filename, N.transform.origin, N.unique_id])
 
 func save(save_game: Resource):
 	child_list.clear()

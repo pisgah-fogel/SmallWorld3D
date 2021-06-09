@@ -89,5 +89,6 @@ __meta__ = {
 }
 
 [node name="Timer" type="Timer" parent="NotificationsCanvas"]
+
 [connection signal="timeout" from="Character/Timer" to="Character" method="_on_Timer_timeout"]
 [connection signal="timeout" from="NotificationsCanvas/Timer" to="NotificationsCanvas" method="_on_Timer_timeout"]

@@ -169,9 +169,9 @@ transform = Transform( 0.016318, 0, -0.999867, 0, 1, 0, 0.999867, 0, 0.016318, -
 shaderPath = "res://Cartoon.shader"
 
 [node name="CharDrops" parent="." instance=ExtResource( 11 )]
+
 [connection signal="timeout" from="TRex/Timer" to="TRex" method="_on_Timer_timeout"]
 [connection signal="body_entered" from="TRex/TalkArea" to="TRex" method="_on_TalkArea_body_entered"]
 
 [editable path="Land/Dirt"]
-
 [editable path="TRex/Trex"]
