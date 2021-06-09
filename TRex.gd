@@ -113,7 +113,8 @@ func speak():
 			{
 				"check":{"FirstTime":false},
 				"text":"Tu as essaye de bouger les leviers ?!\n C'est plutot amusant tu devrais !",
-				"set":{"FirstTime":true}
+				"set":{"FirstTime":true},
+				"quit":{}
 			},
 			{
 				"check":{"FirstTime":true},
@@ -135,7 +136,8 @@ func speak():
 			},
 			{
 				"check":{"FirstTime":true, "answer":3},
-				"text":"Ciao, a plus tard !"
+				"text":"Ciao, a plus tard !",
+				"quit":{}
 			}
 		]
 	mDialogs.registerCallback(funcref(self, "_DialogMarketOpen"), "market")

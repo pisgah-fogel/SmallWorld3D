@@ -45,11 +45,13 @@ func show_start_up_dialog():
 			},
 			{
 				"check":{"isOk":true},
-				"text":"Amuses toi bien !"
+				"text":"Amuses toi bien !",
+				"quit":{}
 			},
 			{
 				"check":{"isOk":false},
-				"text":"Peut importe... Les graphismes ne sont pas pret"
+				"text":"Peut importe... Les graphismes ne sont pas pret",
+				"quit":{}
 			}
 		]
 	mDialogs._popup()

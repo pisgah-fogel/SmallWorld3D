@@ -152,7 +152,10 @@ func _input(event):
 		setVariables(mScript[current_index])
 		if current_index >= 0 and mScript.size() > current_index and "options" in mScript[current_index] and selection >= 0 and selection < mScript[current_index]["options"].size():
 			setVariables(mScript[current_index]["options"][selection])
-		next_text()
+		if current_index >= 0 and mScript.size() > current_index and "quit" in mScript[current_index]:
+			stop_reading()
+		else:
+			next_text()
 	elif event.is_action_pressed("ui_up"):
 		if selection <= 0:
 			selection = allChoices.size()-1
