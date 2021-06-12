@@ -24,6 +24,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://SpatialFish.gd"
 }, {
+"base": "Node",
+"class": "InventoryContainer",
+"language": "GDScript",
+"path": "res://InventoryContainer.gd"
+}, {
 "base": "Resource",
 "class": "Item",
 "language": "GDScript",
@@ -38,6 +43,7 @@ _global_script_class_icons={
 "Bait": "",
 "Character": "",
 "Fish": "",
+"InventoryContainer": "",
 "Item": "",
 "SaveGame": ""
 }

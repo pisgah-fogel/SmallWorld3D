@@ -20,10 +20,6 @@ const ActionCollision = preload("res://ActionCollision.tscn")
 const FishingRot = preload("res://gfx/FishingRot.glb")
 const Bait = preload("res://StaticBait.tscn")
 
-var objectList = []
-class Wallet:
-	var money:int = 0
-var mWallet = Wallet.new()
 
 func getTool():
 	"""
@@ -360,7 +356,7 @@ func openInventory(chest):
 
 func exitInventoryState():
 	Input.set_mouse_mode(Input.MOUSE_MODE_HIDDEN)
-	if inventoryInstance != null:
+	if inventoryInstance != null and is_instance_valid(inventoryInstance):
 		if inventoryInstance.mChest != null:
 			inventoryInstance.mChest.closeChest()
 		inventoryInstance.queue_free()

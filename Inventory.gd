@@ -18,6 +18,8 @@ const hand_open = preload("res://gfx/hand_open.png")
 const hand_close = preload("res://gfx/hand_close.png")
 export(Vector2) var hand_offset =  Vector2(50, 40)
 
+var apparition : bool = false # Shows up smoothly
+
 var mChest = null setget setChest
 func setChest(newchest):
 	mChest = newchest
@@ -30,23 +32,27 @@ func setUserWallet(wallet):
 	if mMoneyLabel != null and mUserWallet != null:
 		mMoneyLabel.text = str(mUserWallet.money)
 
+# Contains all the objects from the user
 var mObjects = [] setget setInventoryList # Contains all the objects from the user
 func setInventoryList(list):
 	mObjects = list
 	update_mItems()
 
 func _ready():
+	# Smooth apparition
 	apparition = true
 	mControl.modulate.a = 0.0
+
+	# Set mouse
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 	Input.set_custom_mouse_cursor(hand_open, Input.CURSOR_ARROW, hand_offset)
-	create_chest_background()
-	if mUserWallet != null:
-		mMoneyLabel.text = str(mUserWallet.money)
-	get_tree().get_root().connect("size_changed", self, "_size_changed")
+
+	# Setup UI graphics
 	reset_drafting_sprite()
 	update_placing()
-	update_mItems()
+
+	# Responssive design
+	var _e = get_tree().get_root().connect("size_changed", self, "_size_changed")
 
 func _process(delta):
 	if apparition:
@@ -59,12 +65,13 @@ func _process(delta):
 func _size_changed():
 	update_placing()
 
-func update_placing():
-	offset.y = mControl.get_viewport_rect().size.y-600
-	offset.x = mControl.get_viewport_rect().size.x/2-500
+##################### USER INTERFACE ###########################
 
 func create_chest_background():
-	if mBackground and mChest!=null:
+	"""
+	Create the Chest background
+	"""
+	if mChest!=null:
 		for row in range(mChest.num_row):
 			for col in range(mChest.num_column):
 				var tt = chest_tile
@@ -73,8 +80,25 @@ func create_chest_background():
 				elif mChest.get("isShop"):
 					tt = shop_tile
 				mBackground.set_cell(mChest.tileStart.x + col, mChest.tileStart.y + row, tt)
+	
+func reset_drafting_sprite():
+	"""
+	Set the sprite which follow the mouse invisible
+	"""
+	mDraggedItem.index = 0
+	mDraggedItem.visible = false
+
+func update_placing():
+	"""
+	Set the entire GUI in the middle of the screen (should be called when resizing)
+	"""
+	offset.y = mControl.get_viewport_rect().size.y-600
+	offset.x = mControl.get_viewport_rect().size.x/2-500
 
 func update_drafting_sprite(i:int, object):
+	"""
+	Set which sprite should follow the user's cursor
+	"""
 	if i < object.mObjects.size() and i >= 0:
 		if object.mObjects[i] != null:
 			mDraggedItem.position = mControl.get_global_mouse_position()
@@ -83,14 +107,15 @@ func update_drafting_sprite(i:int, object):
 		else:
 			reset_drafting_sprite()
 
-func reset_drafting_sprite():
-	mDraggedItem.index = 0
-	mDraggedItem.visible = false
-
 func update_mItems():
+	"""
+	Populate the inventory foreground
+	"""
 	var count = 0
-	if not mObjects or mItems == null:
-		return
+
+	assert(mObjects and mItems != null and is_instance_valid(mItems))
+
+	# User's inventory
 	for item in mObjects:
 		var sprite_id = -1
 		if item != null:
@@ -99,10 +124,12 @@ func update_mItems():
 		var cell_y = count/num_column + tileStart.y
 		mItems.set_cell(cell_x, cell_y, sprite_id)
 		count += 1
+
+	# Chest
 	if mChest:
 		count = 0
 		for i in range(mChest.num_column*mChest.num_row):
-			var sprite_id = -1
+			var sprite_id = -1 # Default empty cell
 			var item = null
 			if i < mChest.mObjects.size():
 				item = mChest.mObjects[i]
@@ -112,6 +139,8 @@ func update_mItems():
 			var cell_y = i/mChest.num_column + mChest.tileStart.y
 			mItems.set_cell(cell_x, cell_y, sprite_id)
 			count += 1
+
+################################################################
 
 func is_inside_inventory(ix, iy, object):
 	var minx = object.tileStart.x
@@ -127,7 +156,6 @@ func mouse_to_mItems_relative(pos):
 	tmp = tmp/mItems.cell_size
 	return tmp - Vector2(100, 100)
 
-var apparition : bool = false
 func _input(event):
 	if event is InputEventMouseButton:
 		get_tree().set_input_as_handled()
@@ -144,44 +172,39 @@ func _input(event):
 		# TODO move selection ?
 		# ...
 
-var dragging = false
-var draggingObj = null
 func follow_mouse(event):
-	if dragging and draggingObj != null:
-		mDraggedItem.visible = true
-		mDraggedItem.position = event.global_position - offset
+	if originalContainer != null:
+		getDraggedItem().visible = true
+		getDraggedItem().position = event.global_position - offset
 
 ###################################### START DRAG #########################################
 var originalPos = 0
-var originChest = false
+var originalContainer = null # if it is not null = we are dragging an object
 
-func restoreObject():
-	if originChest:
-		mChest.setItem(originalPos,draggingObj) # restore object
-	else:
-		mObjects[originalPos] = draggingObj
-	abord_draft()
+func getDraggedItem():
+	return originalContainer.mObjects[originalPos]
 
-func abord_draft():
-	dragging = false
+func abord_draft_give_object_back():
+	# Object never moved from originalContainer
+	originalContainer = null
 	originalPos = 0
-	draggingObj = null
 	Input.set_custom_mouse_cursor(hand_open, Input.CURSOR_ARROW, hand_offset)
 	reset_drafting_sprite()
 	update_mItems()
 
 func pickup_in(container, pos_sel):
-	dragging = true
+	"""
+	Move an object from a container (at index pos_sel) to a temporary variable
+	"""
 	Input.set_custom_mouse_cursor(hand_close, Input.CURSOR_ARROW, hand_offset)
+	originalContainer = container
 	originalPos = pos_sel
-	update_drafting_sprite(pos_sel, container)
-	draggingObj = container.mObjects[pos_sel]
-	container.setItem(pos_sel, null)
+	update_drafting_sprite(originalPos, originalContainer)
 	update_mItems()
 
 func start_drag_sprite(pos):
-	if dragging:
-		restoreObject()
+	if originalContainer!=null:
+		abord_draft_give_object_back() #  TODO: Cleanup ? Is this code usefull
 	var tmp = mouse_to_mItems_relative(pos)
 	var ix:int = tmp.x
 	var iy:int = tmp.y
